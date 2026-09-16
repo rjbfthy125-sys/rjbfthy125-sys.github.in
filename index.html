@@ -58,7 +58,7 @@
         }
 
         .auth-card {
-            background: rgba(30, 41, 59, 0.7);
+            background: rgba(30, 41, 59, 0.85);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 24px;
@@ -138,6 +138,7 @@
             font-weight: 800;
             color: #fff;
             cursor: pointer;
+            user-select: none;
         }
 
         .brand i { color: var(--gold); font-size: 1.5rem; }
@@ -286,7 +287,7 @@
 
         .courses-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 25px;
             margin-bottom: 3rem;
         }
@@ -418,7 +419,7 @@
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.65);
+            background: rgba(15, 23, 42, 0.75);
             color: rgba(255, 255, 255, 0.9);
             padding: 4px 12px;
             border-radius: 6px;
@@ -880,9 +881,9 @@
                 <input type="text" id="studentNameInput" placeholder="أدخل اسمك الرباعي لحفظ النتيجة...">
             </div>
 
-            <form id="studentQuizForm">
+            <form id="studentQuizForm" onsubmit="event.preventDefault(); submitQuiz();">
                 <div id="studentQuestionsContainer"></div>
-                <button type="button" class="btn-gold" style="width: 100%; justify-content: center;" onclick="submitQuiz()">تسليم الامتحان وتصحيحه</button>
+                <button type="submit" class="btn-gold" style="width: 100%; justify-content: center; margin-top: 10px;">تسليم الامتحان وتصحيحه</button>
             </form>
         </div>
     </div>
@@ -923,7 +924,7 @@
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
+        setPersistence(auth, browserLocalPersistence).catch(err => console.error("Auth Persistence Error:", err));
 
         let currentUser = null;
         let isAdmin = false;
@@ -935,7 +936,14 @@
 
         let courses = [];
         let activationCodes = [];
-        let unlockedCourses = JSON.parse(localStorage.getItem('ebrahim_unlocked_courses_v3')) || [];
+        let unlockedCourses = [];
+        
+        try {
+            unlockedCourses = JSON.parse(localStorage.getItem('ebrahim_unlocked_courses_v3')) || [];
+        } catch (e) {
+            unlockedCourses = [];
+        }
+
         let currentEditingQuizQuestions = [];
 
         // Auth Observer
@@ -962,7 +970,7 @@
                 if (confirm('هل ترغب في تسجيل الخروج من حساب Google؟')) {
                     signOut(auth).then(() => {
                         alert('تم تسجيل الخروج بنجاح.');
-                    });
+                    }).catch(err => alert("حدث خطأ أثناء الخروج: " + err.message));
                 }
             } else {
                 signInWithPopup(auth, googleProvider)
@@ -988,7 +996,7 @@
                     const currentCourse = courses.find(c => String(c.id) === String(activeCourseId));
                     if (currentCourse) renderLecturesPlaylist();
                 }
-            });
+            }, (err) => console.error("Firestore Courses Error:", err));
 
             onSnapshot(collection(db, "activationCodes"), (snapshot) => {
                 activationCodes = [];
@@ -998,7 +1006,7 @@
                 if (document.getElementById('manageCodesModal').style.display === 'flex') {
                     renderCodesTable();
                 }
-            });
+            }, (err) => console.error("Firestore Codes Error:", err));
         }
 
         window.showCatalogView = function() {
@@ -1174,18 +1182,15 @@
             document.getElementById('activeLectureActions').innerHTML = '';
         }
 
+        // تحسين دوال معالجة روابط اليوتيوب لاستخراج المعرف بدقة عبر Regex
         function convertToEmbedUrl(url) {
             if (!url) return '';
-            if (url.includes('embed/')) return url;
-            let videoId = '';
-            if (url.includes('v=')) {
-                videoId = url.split('v=')[1].split('&')[0];
-            } else if (url.includes('youtu.be/')) {
-                videoId = url.split('youtu.be/')[1].split('?')[0];
-            } else if (url.includes('shorts/')) {
-                videoId = url.split('shorts/')[1].split('?')[0];
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            if (match && match[2].length === 11) {
+                return `https://www.youtube.com/embed/${match[2]}?autoplay=1&rel=0`;
             }
-            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : url;
+            return url;
         }
 
         window.filterStage = function(stage, btn) {
@@ -1273,8 +1278,12 @@
         window.deleteCurrentCourse = async function() {
             if (!activeCourseId) return;
             if (confirm('هل أنت متأكد من حذف هذا الكورس وجميع المحاضرات التابعة له؟')) {
-                await deleteDoc(doc(db, "courses", String(activeCourseId)));
-                showCatalogView();
+                try {
+                    await deleteDoc(doc(db, "courses", String(activeCourseId)));
+                    showCatalogView();
+                } catch (e) {
+                    alert("حدث خطأ أثناء حذف الكورس: " + e.message);
+                }
             }
         };
 
@@ -1307,10 +1316,13 @@
             };
 
             const updatedLectures = course.lectures ? [...course.lectures, newLecture] : [newLecture];
-            await setDoc(doc(db, "courses", String(activeCourseId)), { ...course, lectures: updatedLectures }, { merge: true });
-
-            closeModal('addLectureModal');
-            selectLecture(newLecture.id);
+            try {
+                await setDoc(doc(db, "courses", String(activeCourseId)), { lectures: updatedLectures }, { merge: true });
+                closeModal('addLectureModal');
+                selectLecture(newLecture.id);
+            } catch (e) {
+                alert("حدث خطأ أثناء إضافة المحاضرة: " + e.message);
+            }
         };
 
         window.deleteLecture = async function(lectureId) {
@@ -1320,11 +1332,15 @@
 
             if (confirm('هل أنت متأكد من حذف هذه المحاضرة؟')) {
                 const updatedLectures = course.lectures.filter(l => String(l.id) !== lectureId);
-                await setDoc(doc(db, "courses", String(activeCourseId)), { ...course, lectures: updatedLectures }, { merge: true });
-                if (updatedLectures.length > 0) {
-                    selectLecture(updatedLectures[0].id);
-                } else {
-                    showEmptyLectureState();
+                try {
+                    await setDoc(doc(db, "courses", String(activeCourseId)), { lectures: updatedLectures }, { merge: true });
+                    if (updatedLectures.length > 0) {
+                        selectLecture(updatedLectures[0].id);
+                    } else {
+                        showEmptyLectureState();
+                    }
+                } catch (e) {
+                    alert("حدث خطأ أثناء حذف المحاضرة: " + e.message);
                 }
             }
         };
@@ -1400,17 +1416,25 @@
             const finalCode = customCode ? customCode.toUpperCase() : 'ENG-' + Math.floor(1000 + Math.random() * 9000);
             const newId = String(Date.now());
 
-            await setDoc(doc(db, "activationCodes", newId), {
-                code: finalCode,
-                courseId: courseIdVal
-            });
+            try {
+                await setDoc(doc(db, "activationCodes", newId), {
+                    code: finalCode,
+                    courseId: courseIdVal
+                });
 
-            document.getElementById('newCodeInput').value = '';
-            alert(`تم إنشاء الكود: ${finalCode}`);
+                document.getElementById('newCodeInput').value = '';
+                alert(`تم إنشاء الكود: ${finalCode}`);
+            } catch (e) {
+                alert("حدث خطأ أثناء إنشاء الكود: " + e.message);
+            }
         };
 
         window.deleteCode = async function(codeDocId) {
-            await deleteDoc(doc(db, "activationCodes", String(codeDocId)));
+            try {
+                await deleteDoc(doc(db, "activationCodes", String(codeDocId)));
+            } catch (e) {
+                alert("حدث خطأ أثناء حذف الكود: " + e.message);
+            }
         };
 
         window.openAddQuizModal = function(lectureId) {
@@ -1447,14 +1471,14 @@
                         ${qIndex > 0 ? `<button type="button" style="color:red; background:none; border:none; cursor:pointer;" onclick="removeQuestion(${qIndex})"><i class="fa-solid fa-trash"></i></button>` : ''}
                     </div>
                     <div class="form-group">
-                        <input type="text" placeholder="نص السؤال" value="${q.question}" onchange="window.updateQText(${qIndex}, this.value)">
+                        <input type="text" placeholder="نص السؤال" value="${q.question}" oninput="window.updateQText(${qIndex}, this.value)">
                     </div>
                     <div class="form-group">
                         <label style="font-size:0.85rem;">الاختيارات (حدد الإجابة الصحيحة):</label>
                         ${q.options.map((opt, oIndex) => `
                             <div style="display:flex; gap:8px; margin-bottom:5px; align-items:center;">
                                 <input type="radio" name="correct_${qIndex}" ${q.answer === oIndex ? 'checked' : ''} onchange="window.updateQAns(${qIndex}, ${oIndex})">
-                                <input type="text" placeholder="خيار ${oIndex + 1}" value="${opt}" onchange="window.updateOptText(${qIndex}, ${oIndex}, this.value)">
+                                <input type="text" placeholder="خيار ${oIndex + 1}" value="${opt}" oninput="window.updateOptText(${qIndex}, ${oIndex}, this.value)">
                             </div>
                         `).join('')}
                     </div>
@@ -1479,10 +1503,14 @@
             const lectureIdx = course.lectures.findIndex(l => String(l.id) === String(activeLectureId));
             if (lectureIdx !== -1) {
                 course.lectures[lectureIdx].quiz = currentEditingQuizQuestions;
-                await setDoc(doc(db, "courses", String(activeCourseId)), { lectures: course.lectures }, { merge: true });
-                alert('تم حفظ الامتحان للمحاضرة بنجاح!');
-                closeModal('addQuizModal');
-                selectLecture(activeLectureId);
+                try {
+                    await setDoc(doc(db, "courses", String(activeCourseId)), { lectures: course.lectures }, { merge: true });
+                    alert('تم حفظ الامتحان للمحاضرة بنجاح!');
+                    closeModal('addQuizModal');
+                    selectLecture(activeLectureId);
+                } catch (e) {
+                    alert("حدث خطأ أثناء حفظ الامتحان: " + e.message);
+                }
             }
         };
 
@@ -1566,9 +1594,9 @@
             openModal('quizResultModal');
         };
 
-        window.sendResultToWhatsApp = function() {
-            const text = `مرحباً أستاذ إبراهيم، أنا الطالب: ${lastQuizResult.name}%0Aحصلت على درجة: (${lastQuizResult.score} من ${lastQuizResult.total}) في امتحان محاضرة: ${lastQuizResult.lectureTitle}`;
-            window.open(`https://wa.me/201010908156?text=${text}`, '_blank');
+      window.sendResultToWhatsApp = function() {
+            const text = `مرحباً أستاذ إبراهيم، أنا الطالب: ${lastQuizResult.name}\nحصلت على درجة: (${lastQuizResult.score} من ${lastQuizResult.total}) في امتحان محاضرة: ${lastQuizResult.lectureTitle}`;
+            window.open(`https://wa.me/201010908156?text=${encodeURIComponent(text)}`, '_blank');
         };
 
         window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; };
@@ -1579,6 +1607,21 @@
                 event.target.style.display = 'none';
             }
         };
+
+        // أحداث لوحة المفاتيح
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+            }
+        });
+
+        document.getElementById('adminPassInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyAdminPass();
+        });
+
+        document.getElementById('activationCodeInput')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') verifyActivationCode();
+        });
 
         // Initialize Firebase Listeners
         initFirebase();
