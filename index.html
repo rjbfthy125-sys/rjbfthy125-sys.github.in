@@ -40,6 +40,80 @@
             min-height: 100vh;
         }
 
+        /* Access Lock Overlay */
+        #authOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary) 0%, #020617 100%);
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+        }
+
+        .auth-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px;
+            padding: 2.5rem 2rem;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .auth-card i.brand-icon {
+            font-size: 3.5rem;
+            color: var(--gold);
+            margin-bottom: 1rem;
+        }
+
+        .auth-card h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-card p {
+            color: #94a3b8;
+            font-size: 0.95rem;
+            margin-bottom: 2rem;
+            line-height: 1.6;
+        }
+
+        .btn-google-login-large {
+            background: #ffffff;
+            color: #0f172a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-google-login-large:hover {
+            background: #f1f5f9;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+        }
+
         /* Navbar */
         .navbar {
             background: var(--primary);
@@ -84,7 +158,7 @@
         .badge-student { background: #e0f2fe; color: #0369a1; }
         .badge-teacher { background: #fef3c7; color: #b45309; }
 
-        .btn-toggle-admin, .btn-manage-codes {
+        .btn-toggle-admin, .btn-manage-codes, .btn-google-auth {
             background: var(--accent);
             color: white;
             border: none;
@@ -101,6 +175,8 @@
         .btn-manage-codes { background: #8b5cf6; }
         .btn-manage-codes:hover { background: #7c3aed; }
         .btn-toggle-admin:hover { background: var(--accent-hover); }
+        .btn-google-auth { background: #ef4444; }
+        .btn-google-auth:hover { background: #dc2626; }
 
         /* General Buttons */
         .btn-primary {
@@ -279,9 +355,8 @@
         .course-desc { font-size: 0.88rem; color: #64748b; margin-bottom: 15px; line-height: 1.5; flex: 1; }
         .lecture-count { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
 
-        .course-detail-view {
-            display: none;
-        }
+        .course-detail-view { display: none; }
+        
         .breadcrumb-bar {
             display: flex;
             align-items: center;
@@ -538,6 +613,19 @@
 </head>
 <body>
 
+    <!-- Access Lock Overlay (Google Auth Required) -->
+    <div id="authOverlay">
+        <div class="auth-card">
+            <i class="fa-solid fa-graduation-cap brand-icon"></i>
+            <h2>منصة الأستاذ إبراهيم مصلحي</h2>
+            <p>مرحباً بك! يرجى تسجيل الدخول بحساب Google للوصول الكامل إلى المحاضرات والامتحانات التفاعلية على المنصة.</p>
+            <button class="btn-google-login-large" onclick="handleGoogleAuth()">
+                <i class="fa-brands fa-google" style="color: #ea4335;"></i>
+                <span>تسجيل الدخول عبر Google</span>
+            </button>
+        </div>
+    </div>
+
     <!-- Header Navigation -->
     <nav class="navbar">
         <div class="brand" onclick="showCatalogView()">
@@ -546,6 +634,9 @@
         </div>
         <div class="nav-controls">
             <span id="roleBadge" class="badge-mode badge-student">وضع الطالب</span>
+            <button id="googleAuthBtn" class="btn-google-auth" onclick="handleGoogleAuth()">
+                <i class="fa-solid fa-right-from-bracket"></i> <span id="googleBtnText">تسجيل الخروج</span>
+            </button>
             <button id="manageCodesBtn" class="btn-manage-codes" style="display: none;" onclick="openManageCodesModal()">
                 <i class="fa-solid fa-key"></i> إدارة الأكواد
             </button>
@@ -815,6 +906,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
           apiKey: "AIzaSyDrw6kNuodv40RQ214ASqh0rY4Uonxw9Zw",
@@ -828,7 +920,13 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+        const auth = getAuth(app);
+        const googleProvider = new GoogleAuthProvider();
 
+        // الضمان التام للحفظ التلقائي على الجهاز/المتصفح
+        setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
+
+        let currentUser = null;
         let isAdmin = false;
         const ADMIN_PIN = "1234";
         let currentFilter = 'all';
@@ -839,6 +937,44 @@
         let courses = [];
         let activationCodes = [];
         let unlockedCourses = JSON.parse(localStorage.getItem('ebrahim_unlocked_courses_v3')) || [];
+
+        // Auth Observer to lock or unlock the whole application
+        onAuthStateChanged(auth, (user) => {
+            currentUser = user;
+            const googleBtnText = document.getElementById('googleBtnText');
+            const studentNameInput = document.getElementById('studentNameInput');
+            const overlay = document.getElementById('authOverlay');
+
+            if (user) {
+                overlay.style.display = 'none';
+                googleBtnText.textContent = 'خروج (' + (user.displayName ? user.displayName.split(' ')[0] : 'حسابي') + ')';
+                if (studentNameInput && !studentNameInput.value) {
+                    studentNameInput.value = user.displayName || '';
+                }
+            } else {
+                overlay.style.display = 'flex';
+                googleBtnText.textContent = 'دخول Google';
+            }
+        });
+
+        window.handleGoogleAuth = function() {
+            if (currentUser) {
+                if (confirm('هل ترغب في تسجيل الخروج من حساب Google؟')) {
+                    signOut(auth).then(() => {
+                        alert('تم تسجيل الخروج بنجاح.');
+                    });
+                }
+            } else {
+                signInWithPopup(auth, googleProvider)
+                    .then((result) => {
+                        alert(`أهلاً بك يا ${result.user.displayName}`);
+                    })
+                    .catch((error) => {
+                        console.error("Auth Error:", error);
+                        alert("حدث خطأ أثناء تسجيل الدخول عبر Google.");
+                    });
+            }
+        }
 
         // Realtime Firebase Listeners
         function initFirebase() {
