@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة الأستاذ إبراهيم مصلحي التعليمية</title>
+    <!-- الخطوط والأيقونات -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #2563eb;
+            --accent-hover: #1d4ed8;
+            --gold: #f59e0b;
+            --gold-hover: #d97706;
+            --text-light: #f8fafc;
+            --text-dark: #334155;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --danger: #ef4444;
+            --success: #10b981;
+            --border: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text-dark);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: var(--primary);
+            color: var(--text-light);
+            padding: 1rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .brand i { color: var(--gold); font-size: 1.5rem; }
+
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .badge-mode {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+        .badge-student { background: #e0f2fe; color: #0369a1; }
+        .badge-teacher { background: #fef3c7; color: #b45309; }
+
+        .btn-toggle-admin, .btn-manage-codes {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.9rem;
+        }
+        .btn-manage-codes { background: #8b5cf6; }
+        .btn-manage-codes:hover { background: #7c3aed; }
+        .btn-toggle-admin:hover { background: var(--accent-hover); }
+
+        /* General Buttons */
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-primary:hover { background: var(--accent-hover); }
+
+        .btn-gold {
+            background: var(--gold);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.3s;
+        }
+        .btn-gold:hover { background: var(--gold-hover); }
+
+        .btn-danger {
+            background: #fee2e2;
+            color: var(--danger);
+            border: 1px solid #fca5a5;
+            padding: 8px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .btn-danger:hover { background: #fca5a5; }
+
+        /* Main Container */
+        .container {
+            max-width: 1250px;
+            margin: 0 auto;
+            padding: 1.5rem 1rem;
+            flex: 1;
+            width: 100%;
+        }
+
+        /* Hero Header */
+        .hero {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--text-light);
+            padding: 2.2rem 1.5rem;
+            text-align: center;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        }
+        .hero h1 { font-size: 1.8rem; margin-bottom: 8px; font-weight: 800; }
+        .hero p { font-size: 0.95rem; opacity: 0.9; }
+
+        /* Filter Tabs */
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+        .filter-btn {
+            background: #ffffff;
+            border: 1px solid var(--border);
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            color: var(--text-dark);
+        }
+        .filter-btn.active, .filter-btn:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Course Catalog Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: var(--primary);
+            border-right: 4px solid var(--accent);
+            padding-right: 12px;
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 3rem;
+        }
+
+        .course-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
+            transition: transform 0.3s, box-shadow 0.3s;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+        .card-cover {
+            height: 160px;
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            position: relative;
+            padding: 1rem;
+            text-align: center;
+        }
+        .card-cover i { font-size: 2.8rem; color: var(--gold); margin-bottom: 6px; }
+
+        .stage-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: rgba(15, 23, 42, 0.85);
+            color: #fff;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        .lock-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        .badge-locked { background: #ef4444; color: white; }
+        .badge-unlocked { background: #10b981; color: white; }
+        .badge-free { background: #3b82f6; color: white; }
+
+        .course-body {
+            padding: 1.2rem;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+        .course-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
+        .course-desc { font-size: 0.88rem; color: #64748b; margin-bottom: 15px; line-height: 1.5; flex: 1; }
+        .lecture-count { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
+
+        .course-detail-view {
+            display: none;
+        }
+        .breadcrumb-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .btn-back {
+            background: #e2e8f0;
+            color: var(--text-dark);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+        .btn-back:hover { background: #cbd5e1; }
+
+        .course-detail-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+        }
+        @media (max-width: 900px) {
+            .course-detail-layout { grid-template-columns: 1fr; }
+        }
+
+        .video-main-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid var(--border);
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        .video-container iframe {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%; border: none;
+        }
+        .watermark {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.65);
+            color: rgba(255, 255, 255, 0.9);
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .lectures-playlist-panel {
+            background: white;
+            border-radius: 16px;
+            padding: 1.2rem;
+            border: 1px solid var(--border);
+            max-height: 650px;
+            display: flex;
+            flex-direction: column;
+        }
+        .playlist-header {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--bg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .playlist-items {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex: 1;
+        }
+        .playlist-item {
+            padding: 12px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #f8fafc;
+        }
+        .playlist-item:hover { background: #eff6ff; border-color: var(--accent); }
+        .playlist-item.active { background: #dbeafe; border-color: var(--accent); }
+        .playlist-item .lecture-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--accent);
+            font-weight: 700;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            border: 1px solid var(--border);
+        }
+        .playlist-item.active .lecture-icon { background: var(--accent); color: white; }
+        .playlist-item-info { flex: 1; overflow: hidden; }
+        .playlist-item-title { font-weight: 700; font-size: 0.92rem; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+        .playlist-item-sub { font-size: 0.78rem; color: #64748b; }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #64748b;
+            grid-column: 1 / -1;
+            background: white;
+            border-radius: 16px;
+            border: 2px dashed #cbd5e1;
+        }
+        .empty-state i { font-size: 3rem; color: #94a3b8; margin-bottom: 1rem; }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(4px);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 650px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 1.8rem;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .close-modal {
+            position: absolute;
+            top: 15px; left: 15px;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #94a3b8;
+            transition: 0.2s;
+        }
+        .close-modal:hover { color: var(--danger); }
+        .modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--primary); }
+
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+
+        .quiz-question-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+        .option-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            margin-bottom: 6px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .option-label:hover { border-color: var(--accent); background: #eff6ff; }
+
+        .codes-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+        .codes-table th, .codes-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: right; }
+        .codes-table th { background: #f1f5f9; }
+
+        footer {
+            background: var(--primary);
+            color: var(--text-light);
+            padding: 2.5rem 1rem 1.5rem 1rem;
+            margin-top: auto;
+        }
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+            text-align: center;
+        }
+        .teacher-info h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--gold); }
+        .teacher-links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
+        .btn-contact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+        .btn-whatsapp { background: #25d366; }
+        .btn-whatsapp:hover { background: #1da851; }
+        .btn-facebook { background: #1877f2; }
+        .btn-facebook:hover { background: #0d65d9; }
+
+        .developer-credit {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .developer-credit a { color: #25d366; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
+        .developer-credit a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <nav class="navbar">
+        <div class="brand" onclick="showCatalogView()">
+            <i class="fa-solid fa-graduation-cap"></i>
+            <span>منصة الأستاذ إبراهيم مصلحي</span>
+        </div>
+        <div class="nav-controls">
+            <span id="roleBadge" class="badge-mode badge-student">وضع الطالب</span>
+            <button id="manageCodesBtn" class="btn-manage-codes" style="display: none;" onclick="openManageCodesModal()">
+                <i class="fa-solid fa-key"></i> إدارة الأكواد
+            </button>
+            <button class="btn-toggle-admin" onclick="toggleRoleModal()">
+                <i class="fa-solid fa-user-shield"></i>
+                <span id="roleBtnText">دخول الأستاذ</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Main Views Container -->
+    <main class="container">
+
+        <!-- VIEW 1: CATALOG VIEW -->
+        <div id="catalogView">
+            <header class="hero">
+                <h1>مرحباً بكم في منصة الأستاذ إبراهيم مصلحي</h1>
+                <p>اختر الكورس الخاص بمرحلتك الدراسية للوصول للمحاضرات والامتحانات التفاعلية</p>
+            </header>
+
+            <div class="filter-container">
+                <button class="filter-btn active" onclick="filterStage('all', this)">جميع المراحل</button>
+                <button class="filter-btn" onclick="filterStage('sec1', this)">الصف الأول الثانوي</button>
+                <button class="filter-btn" onclick="filterStage('sec2', this)">الصف الثاني الثانوي</button>
+                <button class="filter-btn" onclick="filterStage('sec3', this)">الصف الثالث الثانوي</button>
+                <button class="filter-btn" onclick="filterStage('prep', this)">المرحلة الإعدادية</button>
+            </div>
+
+            <div class="section-header">
+                <h2 class="section-title">الكورسات المتاحة</h2>
+                <button id="addCourseBtn" class="btn-primary" style="display: none;" onclick="openModal('addCourseModal')">
+                    <i class="fa-solid fa-plus"></i> إنشاء كورس جديد
+                </button>
+            </div>
+
+            <div class="courses-grid" id="coursesGrid"></div>
+        </div>
+
+        <!-- VIEW 2: COURSE DETAIL VIEW -->
+        <div id="courseDetailView" class="course-detail-view">
+            <div class="breadcrumb-bar">
+                <button class="btn-back" onclick="showCatalogView()">
+                    <i class="fa-solid fa-arrow-right"></i> العودة لقائمة الكورسات
+                </button>
+                <h3 id="currentCourseTitleHeading" style="font-size: 1.2rem; color: var(--primary);">اسم الكورس</h3>
+                <div id="teacherCourseControls" style="display: none; gap: 8px;">
+                    <button class="btn-primary" onclick="openAddLectureModal()">
+                        <i class="fa-solid fa-plus"></i> إضافة محاضرة جديدة
+                    </button>
+                    <button class="btn-danger" onclick="deleteCurrentCourse()">
+                        <i class="fa-solid fa-trash"></i> حذف الكورس
+                    </button>
+                </div>
+            </div>
+
+            <div class="course-detail-layout">
+                <div class="video-main-panel">
+                    <div class="video-container">
+                        <div class="watermark">الأستاذ إبراهيم مصلحي - جميع الحقوق محفوظة</div>
+                        <iframe id="mainVideoIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                    </div>
+
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                        <h2 id="activeLectureTitle" style="font-size: 1.3rem; color: var(--primary);">عنوان المحاضرة</h2>
+                        <div id="activeLectureActions" style="display: flex; gap: 8px;"></div>
+                    </div>
+
+                    <p id="activeLectureDesc" style="color: #64748b; font-size: 0.95rem; line-height: 1.6; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border); padding-bottom: 1rem;"></p>
+                </div>
+
+                <div class="lectures-playlist-panel">
+                    <div class="playlist-header">
+                        <span><i class="fa-solid fa-list-ul" style="color: var(--accent);"></i> محاضرات الكورس</span>
+                        <span id="playlistCountBadge" style="font-size: 0.85rem; color: #64748b;">0 محاضرات</span>
+                    </div>
+
+                    <div class="playlist-items" id="playlistItems"></div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="teacher-info">
+                <h3>الأستاذ إبراهيم مصلحي</h3>
+                <p style="margin-bottom: 12px; color: #cbd5e1;">معلم اللغة الإنجليزية للمرحلتين الإعدادية والثانوية</p>
+                <div class="teacher-links">
+                    <a href="https://wa.me/201010908156" target="_blank" class="btn-contact btn-whatsapp">
+                        <i class="fa-brands fa-whatsapp"></i> واتساب المستر: 01010908156
+                    </a>
+                    <a href="https://www.facebook.com/share/19d58yoniV/" target="_blank" class="btn-contact btn-facebook">
+                        <i class="fa-brands fa-facebook"></i> صفحة الفيس بوك
+                    </a>
+                </div>
+            </div>
+
+            <div style="width:100%; max-width:600px; height:1px; background:rgba(255,255,255,0.1); margin:0.5rem 0;"></div>
+
+            <div class="developer-credit">
+                <span>تم الإنشاء بواسطة فتحي</span>
+                <a href="https://wa.me/201063048827" target="_blank">
+                    <i class="fa-brands fa-whatsapp"></i> 01063048827
+                </a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- MODALS -->
+    <div id="adminAuthModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <span class="close-modal" onclick="closeModal('adminAuthModal')">&times;</span>
+            <h3 class="modal-title">تسجيل دخول الأستاذ</h3>
+            <p style="margin-bottom: 1rem; color: #64748b; font-size: 0.9rem;">أدخل كلمة السر الخاصة بالإدارة:</p>
+            <div class="form-group">
+                <input type="password" id="adminPassInput" placeholder="كلمة السر (الافتراضية: 1234)">
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="verifyAdminPass()">دخول</button>
+        </div>
+    </div>
+
+    <div id="addCourseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addCourseModal')">&times;</span>
+            <h3 class="modal-title">إنشاء كورس جديد</h3>
+            <div class="form-group">
+                <label>اسم الكورس:</label>
+                <input type="text" id="courseTitle" placeholder="مثال: كورس الصف الأول الثانوي - الترم الأول">
+            </div>
+            <div class="form-group">
+                <label>المرحلة التعليمية:</label>
+                <select id="courseStage">
+                    <option value="sec1">الصف الأول الثانوي</option>
+                    <option value="sec2">الصف الثاني الثانوي</option>
+                    <option value="sec3">الصف الثالث الثانوي</option>
+                    <option value="prep">المرحلة الإعدادية</option>
+                    <option value="all">جميع المراحل</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>نظام التفعيل:</label>
+                <select id="courseAccessType">
+                    <option value="free">مجاني لجميع الطلاب</option>
+                    <option value="locked">يتطلب كود تفعيل 🔑</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>وصف مختصر للكورس:</label>
+                <textarea id="courseDesc" rows="3" placeholder="اكتب تفاصيل الكورس ومحتوياته..."></textarea>
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="saveCourse()">إنشاء الكورس</button>
+        </div>
+    </div>
+
+    <div id="addLectureModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addLectureModal')">&times;</span>
+            <h3 class="modal-title">إضافة محاضرة جديدة للكورس</h3>
+            <div class="form-group">
+                <label>عنوان المحاضرة:</label>
+                <input type="text" id="lectureTitle" placeholder="مثال: المحاضرة الأولى - شرح Unit 1 Grammar">
+            </div>
+            <div class="form-group">
+                <label>رابط فيديو يوتيوب:</label>
+                <input type="text" id="lectureVideoUrl" placeholder="https://www.youtube.com/watch?v=XXXXX">
+            </div>
+            <div class="form-group">
+                <label>وصف المحاضرة أو النقاط الهامة:</label>
+                <textarea id="lectureDesc" rows="3" placeholder="تفاصيل الدرس والنقاط المغطاة..."></textarea>
+            </div>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="saveLecture()">إضافة المحاضرة</button>
+        </div>
+    </div>
+
+    <div id="unlockModal" class="modal">
+        <div class="modal-content" style="max-width: 420px;">
+            <span class="close-modal" onclick="closeModal('unlockModal')">&times;</span>
+            <h3 class="modal-title"><i class="fa-solid fa-lock" style="color: var(--gold);"></i> تفعيل الكورس</h3>
+            <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">يرجى إدخال كود التفعيل الخاص بهذا الكورس للوصول إلى المحاضرات:</p>
+            <input type="hidden" id="unlockCourseId">
+            <div class="form-group">
+                <input type="text" id="activationCodeInput" placeholder="أدخل كود التفعيل هنا (مثال: ENG2026)">
+            </div>
+            <button class="btn-gold" style="width: 100%; justify-content: center;" onclick="verifyActivationCode()">تفعيل الكورس الآن</button>
+        </div>
+    </div>
+
+    <div id="manageCodesModal" class="modal">
+        <div class="modal-content" style="max-width: 600px;">
+            <span class="close-modal" onclick="closeModal('manageCodesModal')">&times;</span>
+            <h3 class="modal-title"><i class="fa-solid fa-key"></i> لوحة إدارة أكواد التفعيل</h3>
+            
+            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px; border: 1px solid #e2e8f0; margin-bottom: 1rem;">
+                <h4 style="font-size: 0.95rem; margin-bottom: 8px;">إنشاء كود تفعيل جديد:</h4>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <input type="text" id="newCodeInput" placeholder="الكود (أو اتركه لتوليد تلقائي)" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                    <select id="codeCourseSelect" style="flex: 1; padding: 8px; border: 1px solid #cbd5e1; border-radius: 6px;">
+                        <option value="all">لكل الكورسات المغلقة</option>
+                    </select>
+                    <button class="btn-primary" style="padding: 8px 14px; font-size: 0.85rem;" onclick="generateCode()">إنشاء الكود</button>
+                </div>
+            </div>
+
+            <h4 style="font-size: 0.95rem; margin-bottom: 6px;">الأكواد الفعالة حالياً:</h4>
+            <div style="max-height: 200px; overflow-y: auto;">
+                <table class="codes-table">
+                    <thead>
+                        <tr>
+                            <th>الكود</th>
+                            <th>الكورس المرتبط</th>
+                            <th>حذف</th>
+                        </tr>
+                    </thead>
+                    <tbody id="codesTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="addQuizModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addQuizModal')">&times;</span>
+            <h3 class="modal-title">إعداد امتحان المحاضرة</h3>
+            <div id="quizQuestionsContainer"></div>
+            <button class="btn-primary" style="background: #64748b; margin-bottom: 1rem; width: 100%; justify-content: center;" onclick="addQuestionField()">
+                <i class="fa-solid fa-plus"></i> إضافة سؤال جديد
+            </button>
+            <button class="btn-primary" style="width: 100%; justify-content: center;" onclick="saveQuiz()">حفظ الامتحان</button>
+        </div>
+    </div>
+
+    <div id="takeQuizModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('takeQuizModal')">&times;</span>
+            <h3 class="modal-title" id="quizModalTitle">الامتحان التفاعلي للمحاضرة</h3>
+            
+            <div class="form-group">
+                <label>اسم الطالب الرباعي:</label>
+                <input type="text" id="studentNameInput" placeholder="أدخل اسمك الرباعي لحفظ النتيجة...">
+            </div>
+
+            <form id="studentQuizForm">
+                <div id="studentQuestionsContainer"></div>
+                <button type="button" class="btn-gold" style="width: 100%; justify-content: center;" onclick="submitQuiz()">تسليم الامتحان وتصحيحه</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="quizResultModal" class="modal">
+        <div class="modal-content" style="max-width: 450px; text-align: center;">
+            <span class="close-modal" onclick="closeModal('quizResultModal')">&times;</span>
+            <i class="fa-solid fa-award" style="font-size: 3.5rem; color: var(--gold);"></i>
+            <h3 style="margin-top: 10px;" id="resultStudentName">نتيجة الامتحان</h3>
+            <div style="font-size: 2.5rem; font-weight: 800; color: var(--accent); margin: 10px 0;" id="resultScore">0 / 0</div>
+            <p id="resultFeedback" style="color: #64748b; font-weight: 600; margin-bottom: 1.5rem;"></p>
+
+            <button class="btn-primary" style="background: #25d366; width: 100%; justify-content: center; margin-bottom: 8px;" onclick="sendResultToWhatsApp()">
+                <i class="fa-brands fa-whatsapp"></i> إرسال النتيجة للأستاذ إبراهيم عبر الواتساب
+            </button>
+            <button class="btn-primary" style="background: #64748b; width: 100%; justify-content: center;" onclick="closeModal('quizResultModal')">إغلاق</button>
+        </div>
+    </div>
+
+    <!-- FIREBASE AND SCRIPT ENGINE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+        const firebaseConfig = {
+          apiKey: "AIzaSyDrw6kNuodv40RQ214ASqh0rY4Uonxw9Zw",
+          authDomain: "m-ibrahim-564da.firebaseapp.com",
+          projectId: "m-ibrahim-564da",
+          storageBucket: "m-ibrahim-564da.firebasestorage.app",
+          messagingSenderId: "81796413691",
+          appId: "1:81796413691:web:07673d096e11d7920f185e",
+          measurementId: "G-KNYL55EN7E"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let isAdmin = false;
+        const ADMIN_PIN = "1234";
+        let currentFilter = 'all';
+        let activeCourseId = null;
+        let activeLectureId = null;
+        let lastQuizResult = { name: '', score: 0, total: 0, lectureTitle: '' };
+
+        let courses = [];
+        let activationCodes = [];
+        let unlockedCourses = JSON.parse(localStorage.getItem('ebrahim_unlocked_courses_v3')) || [];
+
+        // Realtime Firebase Listeners
+        function initFirebase() {
+            onSnapshot(collection(db, "courses"), (snapshot) => {
+                courses = [];
+                snapshot.forEach((doc) => {
+                    courses.push({ id: doc.id, ...doc.data() });
+                });
+                renderCourses();
+                if (activeCourseId) {
+                    const currentCourse = courses.find(c => c.id === activeCourseId);
+                    if (currentCourse) renderLecturesPlaylist();
+                }
+            });
+
+            onSnapshot(collection(db, "activationCodes"), (snapshot) => {
+                activationCodes = [];
+                snapshot.forEach((doc) => {
+                    activationCodes.push({ id: doc.id, ...doc.data() });
+                });
+                if (document.getElementById('manageCodesModal').style.display === 'flex') {
+                    renderCodesTable();
+                }
+            });
+        }
+
+        window.showCatalogView = function() {
+            document.getElementById('catalogView').style.display = 'block';
+            document.getElementById('courseDetailView').style.display = 'none';
+            document.getElementById('mainVideoIframe').src = '';
+            activeCourseId = null;
+            renderCourses();
+        }
+
+        window.openCourseDetail = function(courseId) {
+            courseId = String(courseId);
+            const course = courses.find(c => String(c.id) === courseId);
+            if (!course) return;
+
+            activeCourseId = courseId;
+            document.getElementById('catalogView').style.display = 'none';
+            document.getElementById('courseDetailView').style.display = 'block';
+
+            document.getElementById('currentCourseTitleHeading').textContent = course.title;
+            document.getElementById('teacherCourseControls').style.display = isAdmin ? 'flex' : 'none';
+
+            renderLecturesPlaylist();
+
+            if (course.lectures && course.lectures.length > 0) {
+                selectLecture(course.lectures[0].id);
+            } else {
+                showEmptyLectureState();
+            }
+        }
+
+        function renderCourses() {
+            const grid = document.getElementById('coursesGrid');
+            grid.innerHTML = '';
+
+            const filteredCourses = courses.filter(c => {
+                if (currentFilter === 'all') return true;
+                return c.stage === currentFilter;
+            });
+
+            if (filteredCourses.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fa-solid fa-folder-open"></i>
+                        <h3>لا توجد كورسات مضافة في هذا القسم حالياً</h3>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredCourses.forEach(course => {
+                const isUnlocked = unlockedCourses.includes(String(course.id)) || course.accessType === 'free' || isAdmin;
+                const stageMap = {
+                    'sec1': 'الصف الأول الثانوي',
+                    'sec2': 'الصف الثاني الثانوي',
+                    'sec3': 'الصف الثالث الثانوي',
+                    'prep': 'المرحلة الإعدادية',
+                    'all': 'جميع المراحل'
+                };
+                const stageText = stageMap[course.stage] || 'المرحلة الدراسية';
+                const lecturesCount = course.lectures ? course.lectures.length : 0;
+
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.innerHTML = `
+                    <span class="stage-badge">${stageText}</span>
+                    <span class="lock-badge ${course.accessType === 'free' ? 'badge-free' : (isUnlocked ? 'badge-unlocked' : 'badge-locked')}">
+                        ${course.accessType === 'free' ? 'مجاني' : (isUnlocked ? 'مفعل 🔓' : 'مغلق 🔒')}
+                    </span>
+
+                    <div class="card-cover">
+                        <i class="fa-solid fa-book-bookmark"></i>
+                        <span style="font-weight:700; font-size:1.1rem;">${course.title}</span>
+                    </div>
+
+                    <div class="course-body">
+                        <p class="course-desc">${course.desc || 'لا يوجد وصف محدد للكورس.'}</p>
+                        <div class="lecture-count"><i class="fa-solid fa-play-circle"></i> تحتوي على ${lecturesCount} محاضرات</div>
+
+                        ${isUnlocked ? `
+                            <button class="btn-primary" style="width:100%; justify-content:center;" onclick="openCourseDetail('${course.id}')">
+                                <i class="fa-solid fa-right-to-bracket"></i> ادخل للكورس والمحاضرات
+                            </button>
+                        ` : `
+                            <button class="btn-gold" style="width:100%; justify-content:center;" onclick="openUnlockModal('${course.id}')">
+                                <i class="fa-solid fa-key"></i> إدخال كود التفعيل للفتح
+                            </button>
+                        `}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderLecturesPlaylist() {
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            const playlistContainer = document.getElementById('playlistItems');
+            const countBadge = document.getElementById('playlistCountBadge');
+
+            playlistContainer.innerHTML = '';
+
+            if (!course || !course.lectures || course.lectures.length === 0) {
+                countBadge.textContent = '0 محاضرات';
+                playlistContainer.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#94a3b8; font-size:0.9rem;">لا توجد محاضرات في هذا الكورس بعد.</div>';
+                return;
+            }
+
+            countBadge.textContent = `${course.lectures.length} محاضرات`;
+
+            course.lectures.forEach((lec, index) => {
+                const item = document.createElement('div');
+                item.className = `playlist-item ${String(lec.id) === String(activeLectureId) ? 'active' : ''}`;
+                item.onclick = () => selectLecture(lec.id);
+
+                item.innerHTML = `
+                    <div class="lecture-icon">${index + 1}</div>
+                    <div class="playlist-item-info">
+                        <div class="playlist-item-title">${lec.title}</div>
+                        <div class="playlist-item-sub">${lec.quiz && lec.quiz.length > 0 ? '📝 يتوفر امتحان' : '🎥 شرح فقط'}</div>
+                    </div>
+                    ${isAdmin ? `
+                        <button style="border:none; background:none; color:var(--danger); cursor:pointer;" title="حذف المحاضرة" onclick="event.stopPropagation(); deleteLecture('${lec.id}');">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                    ` : ''}
+                `;
+                playlistContainer.appendChild(item);
+            });
+        }
+
+        window.selectLecture = function(lectureId) {
+            lectureId = String(lectureId);
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            if (!course || !course.lectures) return;
+
+            const lec = course.lectures.find(l => String(l.id) === lectureId);
+            if (!lec) return;
+
+            activeLectureId = lectureId;
+            renderLecturesPlaylist();
+
+            document.getElementById('activeLectureTitle').textContent = lec.title;
+            document.getElementById('activeLectureDesc').textContent = lec.desc || 'لا يوجد وصف للمحاضرة.';
+            document.getElementById('mainVideoIframe').src = convertToEmbedUrl(lec.videoUrl);
+
+            const actionsContainer = document.getElementById('activeLectureActions');
+            actionsContainer.innerHTML = '';
+
+            if (isAdmin) {
+                actionsContainer.innerHTML += `
+                    <button class="btn-primary" style="background:#64748b; font-size:0.85rem;" onclick="openAddQuizModal('${lec.id}')">
+                        <i class="fa-solid fa-pen-to-square"></i> ${lec.quiz ? 'تعديل امتحان المحاضرة' : 'إضافة امتحان للمحاضرة'}
+                    </button>
+                `;
+            }
+
+            if (lec.quiz && lec.quiz.length > 0) {
+                actionsContainer.innerHTML += `
+                    <button class="btn-gold" style="font-size:0.88rem;" onclick="openQuizModal('${lec.id}')">
+                        <i class="fa-solid fa-file-pen"></i> أداء امتحان المحاضرة
+                    </button>
+                `;
+            }
+        }
+
+        function showEmptyLectureState() {
+            activeLectureId = null;
+            document.getElementById('mainVideoIframe').src = '';
+            document.getElementById('activeLectureTitle').textContent = 'لا توجد محاضرات حالياً';
+            document.getElementById('activeLectureDesc').textContent = 'قم بإضافة محاضرة جديدة عبر الزر الموجود بالأعلى.';
+            document.getElementById('activeLectureActions').innerHTML = '';
+        }
+
+        function convertToEmbedUrl(url) {
+            if (!url) return '';
+            if (url.includes('embed/')) return url;
+            let videoId = '';
+            if (url.includes('v=')) {
+                videoId = url.split('v=')[1].split('&')[0];
+            } else if (url.includes('youtu.be/')) {
+                videoId = url.split('youtu.be/')[1].split('?')[0];
+            } else if (url.includes('shorts/')) {
+                videoId = url.split('shorts/')[1].split('?')[0];
+            }
+            return videoId ? `https://www.youtube.com/embed/${videoId}?autoplay=1` : url;
+        }
+
+        window.filterStage = function(stage, btn) {
+            currentFilter = stage;
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderCourses();
+        }
+
+        window.toggleRoleModal = function() {
+            if (isAdmin) {
+                isAdmin = false;
+                updateRoleUI();
+            } else {
+                openModal('adminAuthModal');
+            }
+        }
+
+        window.verifyAdminPass = function() {
+            const input = document.getElementById('adminPassInput').value;
+            if (input === ADMIN_PIN) {
+                isAdmin = true;
+                closeModal('adminAuthModal');
+                document.getElementById('adminPassInput').value = '';
+                updateRoleUI();
+            } else {
+                alert('كلمة السر غير صحيحة!');
+            }
+        }
+
+        function updateRoleUI() {
+            const badge = document.getElementById('roleBadge');
+            const btnText = document.getElementById('roleBtnText');
+            const addBtn = document.getElementById('addCourseBtn');
+            const manageCodesBtn = document.getElementById('manageCodesBtn');
+
+            if (isAdmin) {
+                badge.textContent = 'وضع الأستاذ (الإدارة)';
+                badge.className = 'badge-mode badge-teacher';
+                btnText.textContent = 'الخروج من الإدارة';
+                addBtn.style.display = 'inline-flex';
+                manageCodesBtn.style.display = 'inline-flex';
+            } else {
+                badge.textContent = 'وضع الطالب';
+                badge.className = 'badge-mode badge-student';
+                btnText.textContent = 'دخول الأستاذ';
+                addBtn.style.display = 'none';
+                manageCodesBtn.style.display = 'none';
+            }
+
+            renderCourses();
+            if (activeCourseId) openCourseDetail(activeCourseId);
+        }
+
+        window.saveCourse = async function() {
+            const title = document.getElementById('courseTitle').value.trim();
+            const stage = document.getElementById('courseStage').value;
+            const accessType = document.getElementById('courseAccessType').value;
+            const desc = document.getElementById('courseDesc').value.trim();
+
+            if (!title) {
+                alert('يرجى كتابة اسم الكورس!');
+                return;
+            }
+
+            const newId = String(Date.now());
+            const newCourse = {
+                title: title,
+                stage: stage,
+                accessType: accessType,
+                desc: desc,
+                lectures: []
+            };
+
+            await setDoc(doc(db, "courses", newId), newCourse);
+            closeModal('addCourseModal');
+            document.getElementById('courseTitle').value = '';
+            document.getElementById('courseDesc').value = '';
+        }
+
+        window.deleteCurrentCourse = async function() {
+            if (!activeCourseId) return;
+            if (confirm('هل أنت متأكد من حذف هذا الكورس وجميع المحاضرات التابعة له؟')) {
+                await deleteDoc(doc(db, "courses", String(activeCourseId)));
+                showCatalogView();
+            }
+        }
+
+        window.openAddLectureModal = function() {
+            document.getElementById('lectureTitle').value = '';
+            document.getElementById('lectureVideoUrl').value = '';
+            document.getElementById('lectureDesc').value = '';
+            openModal('addLectureModal');
+        }
+
+        window.saveLecture = async function() {
+            const title = document.getElementById('lectureTitle').value.trim();
+            const videoUrl = document.getElementById('lectureVideoUrl').value.trim();
+            const desc = document.getElementById('lectureDesc').value.trim();
+
+            if (!title || !videoUrl) {
+                alert('يرجى ملء عنوان المحاضرة ورابط الفيديو!');
+                return;
+            }
+
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            if (!course) return;
+
+            const newLecture = {
+                id: String(Date.now()),
+                title: title,
+                videoUrl: videoUrl,
+                desc: desc,
+                quiz: []
+            };
+
+            const updatedLectures = course.lectures ? [...course.lectures, newLecture] : [newLecture];
+            await setDoc(doc(db, "courses", String(activeCourseId)), { ...course, lectures: updatedLectures }, { merge: true });
+
+            closeModal('addLectureModal');
+            selectLecture(newLecture.id);
+        }
+
+        window.deleteLecture = async function(lectureId) {
+            lectureId = String(lectureId);
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            if (!course) return;
+
+            if (confirm('هل أنت متأكد من حذف هذه المحاضرة؟')) {
+                const updatedLectures = course.lectures.filter(l => String(l.id) !== lectureId);
+                await setDoc(doc(db, "courses", String(activeCourseId)), { ...course, lectures: updatedLectures }, { merge: true });
+                if (updatedLectures.length > 0) {
+                    selectLecture(updatedLectures[0].id);
+                } else {
+                    showEmptyLectureState();
+                }
+            }
+        }
+
+        window.openUnlockModal = function(courseId) {
+            document.getElementById('unlockCourseId').value = String(courseId);
+            document.getElementById('activationCodeInput').value = '';
+            openModal('unlockModal');
+        }
+
+        window.verifyActivationCode = function() {
+            const courseId = String(document.getElementById('unlockCourseId').value);
+            const inputCode = document.getElementById('activationCodeInput').value.trim();
+
+            if (!inputCode) {
+                alert('يرجى كتابة كود التفعيل!');
+                return;
+            }
+
+            const match = activationCodes.find(c => c.code.toUpperCase() === inputCode.toUpperCase() && (c.courseId === "all" || String(c.courseId) === courseId));
+
+            if (match) {
+                if (!unlockedCourses.includes(courseId)) {
+                    unlockedCourses.push(courseId);
+                    localStorage.setItem('ebrahim_unlocked_courses_v3', JSON.stringify(unlockedCourses));
+                }
+                alert('تم تفعيل الكورس بنجاح!');
+                closeModal('unlockModal');
+                renderCourses();
+                openCourseDetail(courseId);
+            } else {
+                alert('كود التفعيل غير صحيح أو غير مخصص لهذا الكورس.');
+            }
+        }
+
+        window.openManageCodesModal = function() {
+            const select = document.getElementById('codeCourseSelect');
+            select.innerHTML = '<option value="all">لكل الكورسات المغلقة (كود عام)</option>';
+            courses.filter(c => c.accessType === 'locked').forEach(c => {
+                select.innerHTML += `<option value="${c.id}">${c.title}</option>`;
+            });
+
+            renderCodesTable();
+            openModal('manageCodesModal');
+        }
+
+        function renderCodesTable() {
+            const tbody = document.getElementById('codesTableBody');
+            tbody.innerHTML = '';
+
+            activationCodes.forEach((c) => {
+                let courseName = 'جميع الكورسات';
+                if (c.courseId !== 'all') {
+                    const target = courses.find(item => String(item.id) === String(c.courseId));
+                    courseName = target ? target.title : 'كورس محذوف';
+                }
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:700; color:var(--accent);">${c.code}</td>
+                        <td>${courseName}</td>
+                        <td><button style="color:red; border:none; background:none; cursor:pointer;" onclick="deleteCode('${c.id}')"><i class="fa-solid fa-trash"></i></button></td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.generateCode = async function() {
+            const customCode = document.getElementById('newCodeInput').value.trim();
+            const courseIdVal = document.getElementById('codeCourseSelect').value;
+
+            const finalCode = customCode ? customCode.toUpperCase() : 'ENG-' + Math.floor(1000 + Math.random() * 9000);
+            const newId = String(Date.now());
+
+            await setDoc(doc(db, "activationCodes", newId), {
+                code: finalCode,
+                courseId: courseIdVal
+            });
+
+            document.getElementById('newCodeInput').value = '';
+            alert(`تم إنشاء الكود: ${finalCode}`);
+        }
+
+        window.deleteCode = async function(codeDocId) {
+            await deleteDoc(doc(db, "activationCodes", String(codeDocId)));
+        }
+
+        let currentEditingQuizQuestions = [];
+
+        window.openAddQuizModal = function(lectureId) {
+            lectureId = String(lectureId);
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            const lec = course.lectures.find(l => String(l.id) === lectureId);
+
+            if (lec && lec.quiz && lec.quiz.length > 0) {
+                currentEditingQuizQuestions = JSON.parse(JSON.stringify(lec.quiz));
+            } else {
+                currentEditingQuizQuestions = [{ question: '', options: ['', '', '', ''], answer: 0 }];
+            }
+
+            renderQuestionInputs();
+            openModal('addQuizModal');
+        }
+
+        window.addQuestionField = function() {
+            currentEditingQuizQuestions.push({ question: '', options: ['', '', '', ''], answer: 0 });
+            renderQuestionInputs();
+        }
+
+        function renderQuestionInputs() {
+            const container = document.getElementById('quizQuestionsContainer');
+            container.innerHTML = '';
+
+            currentEditingQuizQuestions.forEach((q, qIndex) => {
+                const qBox = document.createElement('div');
+                qBox.className = 'quiz-question-box';
+                qBox.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                        <strong>السؤال رقم ${qIndex + 1}</strong>
+                        ${qIndex > 0 ? `<button type="button" style="color:red; background:none; border:none; cursor:pointer;" onclick="removeQuestion(${qIndex})"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </div>
+                    <div class="form-group">
+                        <input type="text" placeholder="نص السؤال" value="${q.question}" onchange="window.updateQText(${qIndex}, this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label style="font-size:0.85rem;">الاختيارات (حدد الإجابة الصحيحة):</label>
+                        ${q.options.map((opt, oIndex) => `
+                            <div style="display:flex; gap:8px; margin-bottom:5px; align-items:center;">
+                                <input type="radio" name="correct_${qIndex}" ${q.answer === oIndex ? 'checked' : ''} onchange="window.updateQAns(${qIndex}, ${oIndex})">
+                                <input type="text" placeholder="خيار ${oIndex + 1}" value="${opt}" onchange="window.updateOptText(${qIndex}, ${oIndex}, this.value)">
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+                container.appendChild(qBox);
+            });
+        }
+
+        window.updateQText = (qIdx, val) => { currentEditingQuizQuestions[qIdx].question = val; };
+        window.updateQAns = (qIdx, aIdx) => { currentEditingQuizQuestions[qIdx].answer = aIdx; };
+        window.updateOptText = (qIdx, oIdx, val) => { currentEditingQuizQuestions[qIdx].options[oIdx] = val; };
+
+        window.removeQuestion = function(index) {
+            currentEditingQuizQuestions.splice(index, 1);
+            renderQuestionInputs();
+        }
+
+        window.saveQuiz = async function() {
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            if (!course) return;
+
+            const lectureIdx = course.lectures.findIndex(l => String(l.id) === String(activeLectureId));
+            if (lectureIdx !== -1) {
+                course.lectures[lectureIdx].quiz = currentEditingQuizQuestions;
+                await setDoc(doc(db, "courses", String(activeCourseId)), { lectures: course.lectures }, { merge: true });
+                alert('تم حفظ الامتحان للمحاضرة بنجاح!');
+                closeModal('addQuizModal');
+                selectLecture(activeLectureId);
+            }
+        }
+
+        window.openQuizModal = function(lectureId) {
+            lectureId = String(lectureId);
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            const lec = course.lectures.find(l => String(l.id) === lectureId);
+
+            if (!lec.quiz || lec.quiz.length === 0) {
+                alert('لا يوجد امتحان متاح لهذه المحاضرة.');
+                return;
+            }
+
+            document.getElementById('quizModalTitle').textContent = `امتحان: ${lec.title}`;
+            const container = document.getElementById('studentQuestionsContainer');
+            container.innerHTML = '';
+
+            lec.quiz.forEach((q, qIndex) => {
+                const qBox = document.createElement('div');
+                qBox.className = 'quiz-question-box';
+                qBox.innerHTML = `
+                    <div style="font-weight:700; margin-bottom:10px;">${qIndex + 1}. ${q.question}</div>
+                    ${q.options.map((opt, oIndex) => `
+                        <label class="option-label">
+                            <input type="radio" name="student_q_${qIndex}" value="${oIndex}">
+                            <span>${opt}</span>
+                        </label>
+                    `).join('')}
+                `;
+                container.appendChild(qBox);
+            });
+
+            openModal('takeQuizModal');
+        }
+
+        window.submitQuiz = function() {
+            const studentName = document.getElementById('studentNameInput').value.trim();
+            if (!studentName) {
+                alert('يرجى كتابة اسمك الرباعي قبل تسليم الامتحان!');
+                return;
+            }
+
+            const course = courses.find(c => String(c.id) === String(activeCourseId));
+            const lec = course.lectures.find(l => String(l.id) === String(activeLectureId));
+
+            let score = 0;
+            const total = lec.quiz.length;
+
+            lec.quiz.forEach((q, qIndex) => {
+                const selected = document.querySelector(`input[name="student_q_${qIndex}"]:checked`);
+                if (selected && parseInt(selected.value) === q.answer) {
+                    score++;
+                }
+            });
+
+            closeModal('takeQuizModal');
+
+            lastQuizResult = {
+                name: studentName,
+                score: score,
+                total: total,
+                lectureTitle: lec.title
+            };
+
+            document.getElementById('resultStudentName').textContent = `نتيجة الطالب: ${studentName}`;
+            document.getElementById('resultScore').textContent = `${score} / ${total}`;
+            const percentage = (score / total) * 100;
+            const feedback = document.getElementById('resultFeedback');
+
+            if (percentage >= 85) {
+                feedback.textContent = 'ممتاز جداً! أداء رائع واستيعاب ممتاز للدرس.';
+                feedback.style.color = '#10b981';
+            } else if (percentage >= 50) {
+                feedback.textContent = 'أحسنت! أداء جيد ويمكنك مراجعة المحاضرة لتثبيت المعلومة.';
+                feedback.style.color = '#f59e0b';
+            } else {
+                feedback.textContent = 'يحتاج إلى إعادة مشاهدة المحاضرة بتركيز وتكرار المحاولة.';
+                feedback.style.color = '#ef4444';
+            }
+
+            openModal('quizResultModal');
+        }
+
+        window.sendResultToWhatsApp = function() {
+            const text = `مرحباً أستاذ إبراهيم، أنا الطالب: ${lastQuizResult.name}%0Aحصلت على درجة: (${lastQuizResult.score} من ${lastQuizResult.total}) في امتحان محاضرة: ${lastQuizResult.lectureTitle}`;
+            window.open(`https://wa.me/201010908156?text=${text}`, '_blank');
+        }
+
+        window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; }
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
+
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+            }
+        }
+
+        // Run Engine
+        initFirebase();
+    </script>
+</body>
+</html>
