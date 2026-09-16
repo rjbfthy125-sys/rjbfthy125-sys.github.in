@@ -905,7 +905,7 @@
     <!-- FIREBASE AND SCRIPT ENGINE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
 
         const firebaseConfig = {
@@ -923,12 +923,11 @@
         const auth = getAuth(app);
         const googleProvider = new GoogleAuthProvider();
 
-        // الضمان التام للحفظ التلقائي على الجهاز/المتصفح
         setPersistence(auth, browserLocalPersistence).catch(err => console.error(err));
 
         let currentUser = null;
         let isAdmin = false;
-        const ADMIN_PIN = "01010908156";
+        const ADMIN_PIN = "1234";
         let currentFilter = 'all';
         let activeCourseId = null;
         let activeLectureId = null;
@@ -937,8 +936,9 @@
         let courses = [];
         let activationCodes = [];
         let unlockedCourses = JSON.parse(localStorage.getItem('ebrahim_unlocked_courses_v3')) || [];
+        let currentEditingQuizQuestions = [];
 
-        // Auth Observer to lock or unlock the whole application
+        // Auth Observer
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
             const googleBtnText = document.getElementById('googleBtnText');
@@ -974,18 +974,18 @@
                         alert("حدث خطأ أثناء تسجيل الدخول عبر Google.");
                     });
             }
-        }
+        };
 
         // Realtime Firebase Listeners
         function initFirebase() {
             onSnapshot(collection(db, "courses"), (snapshot) => {
                 courses = [];
                 snapshot.forEach((doc) => {
-                    courses.push({ id: doc.id, ...doc.data() });
+                    courses.push({ id: String(doc.id), ...doc.data() });
                 });
                 renderCourses();
                 if (activeCourseId) {
-                    const currentCourse = courses.find(c => c.id === activeCourseId);
+                    const currentCourse = courses.find(c => String(c.id) === String(activeCourseId));
                     if (currentCourse) renderLecturesPlaylist();
                 }
             });
@@ -993,7 +993,7 @@
             onSnapshot(collection(db, "activationCodes"), (snapshot) => {
                 activationCodes = [];
                 snapshot.forEach((doc) => {
-                    activationCodes.push({ id: doc.id, ...doc.data() });
+                    activationCodes.push({ id: String(doc.id), ...doc.data() });
                 });
                 if (document.getElementById('manageCodesModal').style.display === 'flex') {
                     renderCodesTable();
@@ -1007,7 +1007,7 @@
             document.getElementById('mainVideoIframe').src = '';
             activeCourseId = null;
             renderCourses();
-        }
+        };
 
         window.openCourseDetail = function(courseId) {
             courseId = String(courseId);
@@ -1028,10 +1028,11 @@
             } else {
                 showEmptyLectureState();
             }
-        }
+        };
 
         function renderCourses() {
             const grid = document.getElementById('coursesGrid');
+            if (!grid) return;
             grid.innerHTML = '';
 
             const filteredCourses = courses.filter(c => {
@@ -1098,15 +1099,16 @@
             const playlistContainer = document.getElementById('playlistItems');
             const countBadge = document.getElementById('playlistCountBadge');
 
+            if (!playlistContainer) return;
             playlistContainer.innerHTML = '';
 
             if (!course || !course.lectures || course.lectures.length === 0) {
-                countBadge.textContent = '0 محاضرات';
+                if (countBadge) countBadge.textContent = '0 محاضرات';
                 playlistContainer.innerHTML = '<div style="text-align:center; padding:1.5rem; color:#94a3b8; font-size:0.9rem;">لا توجد محاضرات في هذا الكورس بعد.</div>';
                 return;
             }
 
-            countBadge.textContent = `${course.lectures.length} محاضرات`;
+            if (countBadge) countBadge.textContent = `${course.lectures.length} محاضرات`;
 
             course.lectures.forEach((lec, index) => {
                 const item = document.createElement('div');
@@ -1150,7 +1152,7 @@
             if (isAdmin) {
                 actionsContainer.innerHTML += `
                     <button class="btn-primary" style="background:#64748b; font-size:0.85rem;" onclick="openAddQuizModal('${lec.id}')">
-                        <i class="fa-solid fa-pen-to-square"></i> ${lec.quiz ? 'تعديل امتحان المحاضرة' : 'إضافة امتحان للمحاضرة'}
+                        <i class="fa-solid fa-pen-to-square"></i> ${lec.quiz && lec.quiz.length > 0 ? 'تعديل امتحان المحاضرة' : 'إضافة امتحان للمحاضرة'}
                     </button>
                 `;
             }
@@ -1162,7 +1164,7 @@
                     </button>
                 `;
             }
-        }
+        };
 
         function showEmptyLectureState() {
             activeLectureId = null;
@@ -1191,7 +1193,7 @@
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
             renderCourses();
-        }
+        };
 
         window.toggleRoleModal = function() {
             if (isAdmin) {
@@ -1200,7 +1202,7 @@
             } else {
                 openModal('adminAuthModal');
             }
-        }
+        };
 
         window.verifyAdminPass = function() {
             const input = document.getElementById('adminPassInput').value;
@@ -1212,7 +1214,7 @@
             } else {
                 alert('كلمة السر غير صحيحة!');
             }
-        }
+        };
 
         function updateRoleUI() {
             const badge = document.getElementById('roleBadge');
@@ -1258,11 +1260,15 @@
                 lectures: []
             };
 
-            await setDoc(doc(db, "courses", newId), newCourse);
-            closeModal('addCourseModal');
-            document.getElementById('courseTitle').value = '';
-            document.getElementById('courseDesc').value = '';
-        }
+            try {
+                await setDoc(doc(db, "courses", newId), newCourse);
+                closeModal('addCourseModal');
+                document.getElementById('courseTitle').value = '';
+                document.getElementById('courseDesc').value = '';
+            } catch (e) {
+                alert("حدث خطأ أثناء حفظ الكورس: " + e.message);
+            }
+        };
 
         window.deleteCurrentCourse = async function() {
             if (!activeCourseId) return;
@@ -1270,14 +1276,14 @@
                 await deleteDoc(doc(db, "courses", String(activeCourseId)));
                 showCatalogView();
             }
-        }
+        };
 
         window.openAddLectureModal = function() {
             document.getElementById('lectureTitle').value = '';
             document.getElementById('lectureVideoUrl').value = '';
             document.getElementById('lectureDesc').value = '';
             openModal('addLectureModal');
-        }
+        };
 
         window.saveLecture = async function() {
             const title = document.getElementById('lectureTitle').value.trim();
@@ -1305,7 +1311,7 @@
 
             closeModal('addLectureModal');
             selectLecture(newLecture.id);
-        }
+        };
 
         window.deleteLecture = async function(lectureId) {
             lectureId = String(lectureId);
@@ -1321,13 +1327,13 @@
                     showEmptyLectureState();
                 }
             }
-        }
+        };
 
         window.openUnlockModal = function(courseId) {
             document.getElementById('unlockCourseId').value = String(courseId);
             document.getElementById('activationCodeInput').value = '';
             openModal('unlockModal');
-        }
+        };
 
         window.verifyActivationCode = function() {
             const courseId = String(document.getElementById('unlockCourseId').value);
@@ -1352,7 +1358,7 @@
             } else {
                 alert('كود التفعيل غير صحيح أو غير مخصص لهذا الكورس.');
             }
-        }
+        };
 
         window.openManageCodesModal = function() {
             const select = document.getElementById('codeCourseSelect');
@@ -1363,10 +1369,11 @@
 
             renderCodesTable();
             openModal('manageCodesModal');
-        }
+        };
 
         function renderCodesTable() {
             const tbody = document.getElementById('codesTableBody');
+            if (!tbody) return;
             tbody.innerHTML = '';
 
             activationCodes.forEach((c) => {
@@ -1400,13 +1407,11 @@
 
             document.getElementById('newCodeInput').value = '';
             alert(`تم إنشاء الكود: ${finalCode}`);
-        }
+        };
 
         window.deleteCode = async function(codeDocId) {
             await deleteDoc(doc(db, "activationCodes", String(codeDocId)));
-        }
-
-        let currentEditingQuizQuestions = [];
+        };
 
         window.openAddQuizModal = function(lectureId) {
             lectureId = String(lectureId);
@@ -1421,15 +1426,16 @@
 
             renderQuestionInputs();
             openModal('addQuizModal');
-        }
+        };
 
         window.addQuestionField = function() {
             currentEditingQuizQuestions.push({ question: '', options: ['', '', '', ''], answer: 0 });
             renderQuestionInputs();
-        }
+        };
 
         function renderQuestionInputs() {
             const container = document.getElementById('quizQuestionsContainer');
+            if (!container) return;
             container.innerHTML = '';
 
             currentEditingQuizQuestions.forEach((q, qIndex) => {
@@ -1464,7 +1470,7 @@
         window.removeQuestion = function(index) {
             currentEditingQuizQuestions.splice(index, 1);
             renderQuestionInputs();
-        }
+        };
 
         window.saveQuiz = async function() {
             const course = courses.find(c => String(c.id) === String(activeCourseId));
@@ -1478,14 +1484,14 @@
                 closeModal('addQuizModal');
                 selectLecture(activeLectureId);
             }
-        }
+        };
 
         window.openQuizModal = function(lectureId) {
             lectureId = String(lectureId);
             const course = courses.find(c => String(c.id) === String(activeCourseId));
             const lec = course.lectures.find(l => String(l.id) === lectureId);
 
-            if (!lec.quiz || lec.quiz.length === 0) {
+            if (!lec || !lec.quiz || lec.quiz.length === 0) {
                 alert('لا يوجد امتحان متاح لهذه المحاضرة.');
                 return;
             }
@@ -1510,7 +1516,7 @@
             });
 
             openModal('takeQuizModal');
-        }
+        };
 
         window.submitQuiz = function() {
             const studentName = document.getElementById('studentNameInput').value.trim();
@@ -1558,23 +1564,23 @@
             }
 
             openModal('quizResultModal');
-        }
+        };
 
         window.sendResultToWhatsApp = function() {
             const text = `مرحباً أستاذ إبراهيم، أنا الطالب: ${lastQuizResult.name}%0Aحصلت على درجة: (${lastQuizResult.score} من ${lastQuizResult.total}) في امتحان محاضرة: ${lastQuizResult.lectureTitle}`;
             window.open(`https://wa.me/201010908156?text=${text}`, '_blank');
-        }
+        };
 
-        window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; }
-        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; }
+        window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; };
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
 
         window.onclick = function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
             }
-        }
+        };
 
-        // Run Engine
+        // Initialize Firebase Listeners
         initFirebase();
     </script>
 </body>
