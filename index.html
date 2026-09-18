@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<h lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -235,14 +235,34 @@
         .hero {
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: var(--text-light);
-            padding: 2.2rem 1.5rem;
+            padding: 2.5rem 1.5rem;
             text-align: center;
             border-radius: 20px;
             margin-bottom: 2rem;
             box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
         .hero h1 { font-size: 1.8rem; margin-bottom: 8px; font-weight: 800; }
         .hero p { font-size: 0.95rem; opacity: 0.9; }
+
+        /* Teacher Profile Image Style */
+        .teacher-avatar {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--gold);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+            margin-bottom: 1.2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .teacher-avatar:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
+        }
 
         /* Filter Tabs */
         .filter-container {
@@ -612,7 +632,7 @@
         .developer-credit a:hover { text-decoration: underline; }
     </style>
 </head>
-<body>
+<>
 
     <!-- Access Lock Overlay (Google Auth Required) -->
     <div id="authOverlay">
@@ -654,6 +674,7 @@
         <!-- VIEW 1: CATALOG VIEW -->
         <div id="catalogView">
             <header class="hero">
+                <img src="12.jpg" alt="الأستاذ إبراهيم مصلحي" class="teacher-avatar">
                 <h1>مرحباً بكم في منصة الأستاذ إبراهيم مصلحي LEARN ENGLISH</h1>
                 <p>اختر الكورس الخاص بمرحلتك الدراسية للوصول للمحاضرات والامتحانات التفاعلية</p>
             </header>
