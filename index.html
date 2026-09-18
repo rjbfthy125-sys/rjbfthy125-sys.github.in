@@ -264,6 +264,104 @@
             box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
         }
 
+        /* Features Section & Cards */
+        .features-section {
+            background: linear-gradient(135deg, rgba(15, 23, 42, 0.03) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem 1.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 1.8rem;
+        }
+
+        .features-header h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 0.4rem;
+        }
+
+        .features-header p {
+            font-size: 0.95rem;
+            color: #64748b;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            animation: fadeInUp 0.8s ease forwards;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.12);
+            border-color: var(--accent);
+        }
+
+        .feature-icon-wrapper {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon-wrapper {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.1) rotate(-5deg);
+        }
+
+        .feature-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .feature-desc {
+            font-size: 0.88rem;
+            color: #64748b;
+            line-height: 1.6;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
         /* Filter Tabs */
         .filter-container {
             display: flex;
@@ -678,6 +776,71 @@
                 <h1>مرحباً بكم في منصة الأستاذ إبراهيم مصلحي LEARN ENGLISH</h1>
                 <p>اختر الكورس الخاص بمرحلتك الدراسية للوصول للمحاضرات والامتحانات التفاعلية</p>
             </header>
+
+            <!-- قسم مميزات المنصة والمستر (7 كروت) -->
+            <section class="features-section">
+                <div class="features-header">
+                    <h2><i class="fa-solid fa-star" style="color: var(--gold);"></i> مميزات التعلم مع الأستاذ إبراهيم مصلحي</h2>
+                    <p>تجربة تعليمية متكاملة ومخصصة لطلاب المرحلة الإعدادية والثانوية</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-spell-check"></i>
+                        </div>
+                        <h3 class="feature-title">تبسيط القواعد التأسيسية</h3>
+                        <p class="feature-desc">شرح مبسط وشامل لقواعد اللغة الإنجليزية من الأساسيات وحتى أسرار التفوق للمرحلة الثانوية.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-book-open-reader"></i>
+                        </div>
+                        <h3 class="feature-title">تغطية المناهج بالتفصيل</h3>
+                        <p class="feature-desc">شرح كامل ومتقن لكافة الوحدات والدروس لصفوف المرحلة الإعدادية والثانوية طبقا لأحدث التعديلات.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-laptop-code"></i>
+                        </div>
+                        <h3 class="feature-title">امتحانات تفاعلية فورية</h3>
+                        <p class="feature-desc">اختبارات إلكترونية عقب كل محاضرة لتقييم مستواك فورياً واستلام النتيجة والتصحيح التلقائي.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-bullseye"></i>
+                        </div>
+                        <h3 class="feature-title">مراجعات وشكليات الامتحان</h3>
+                        <p class="feature-desc">مراجعات مكثفة وليالي الامتحان وتدريب عملي على أسلوب ونمط الأسئلة الوزارية والامتحانات النهائية.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-language"></i>
+                        </div>
+                        <h3 class="feature-title">تطوير مهارات الترجمة والقطع</h3>
+                        <p class="feature-desc">تدريب خاص على التعامل مع قطع الفهم الصعبة وترجمة النصوص باحترافية وكتابة المقالات.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h3 class="feature-title">متابعة مستمرة عبر الواتساب</h3>
+                        <p class="feature-desc">تواصل مباشر ومستمر مع الأستاذ إبراهيم للإجابة على جميع الاستفسارات والأسئلة في أي وقت.</p>
+                    </div>
+
+                    <div class="feature-card">
+                        <div class="feature-icon-wrapper">
+                            <i class="fa-solid fa-database"></i>
+                        </div>
+                        <h3 class="feature-title">بنك أسئلة وفير ومتجدد</h3>
+                        <p class="feature-desc">مئات الأسئلة والتمارين المتنوعة المغطية لكافة أجزاء المنهج لضمان التميز والدرجات النهائية.</p>
+                    </div>
+                </div>
+            </section>
 
             <div class="filter-container">
                 <button class="filter-btn active" onclick="filterStage('all', this)">جميع المراحل</button>
