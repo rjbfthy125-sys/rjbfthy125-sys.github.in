@@ -3,751 +3,851 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>منصة الأستاذ إبراهيم مصلحي التعليمية</title>
+    <title>منصة المستر سعيد التعليمية</title>
     <!-- الخطوط والأيقونات -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <style>
-        :root {
-            --primary: #0f172a;
-            --secondary: #1e293b;
-            --accent: #2563eb;
-            --accent-hover: #1d4ed8;
-            --gold: #f59e0b;
-            --gold-hover: #d97706;
-            --text-light: #f8fafc;
-            --text-dark: #334155;
-            --bg: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.9);
-            --danger: #ef4444;
-            --success: #10b981;
-            --border: #e2e8f0;
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        /* خلفية عصرية متدرجة وتفاعلية للموقع بالكامل */
-        body {
-            background-color: var(--bg);
-            background-image: 
-                radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.12) 0px, transparent 50%),
-                radial-gradient(at 100% 0%, rgba(245, 158, 11, 0.1) 0px, transparent 50%),
-                radial-gradient(at 50% 100%, rgba(15, 23, 42, 0.08) 0px, transparent 50%);
-            background-attachment: fixed;
-            color: var(--text-dark);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Access Lock Overlay */
-        #authOverlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, var(--primary) 0%, #020617 100%);
-            z-index: 99999;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 1.5rem;
-            text-align: center;
-            color: white;
-        }
-
-        .auth-card {
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 24px;
-            padding: 2.5rem 2rem;
-            max-width: 450px;
-            width: 100%;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .auth-card i.brand-icon {
-            font-size: 3.5rem;
-            color: var(--gold);
-            margin-bottom: 1rem;
-        }
-
-        .auth-card h2 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            margin-bottom: 0.5rem;
-        }
-
-        .auth-card p {
-            color: #94a3b8;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .btn-google-login-large {
-            background: #ffffff;
-            color: #0f172a;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 12px;
-            font-size: 1.05rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-google-login-large:hover {
-            background: #f1f5f9;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Navbar - غير ثابت أثناء السكرول */
-        .navbar {
-            background: var(--primary);
-            color: var(--text-light);
-            padding: 1rem 1.5rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            position: relative; /* إلغاء التثبيت */
-            z-index: 1000;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-size: 1.25rem;
-            font-weight: 800;
-            color: #fff;
-            cursor: pointer;
-            user-select: none;
-        }
-
-        .brand i { color: var(--gold); font-size: 1.5rem; }
-
-        .nav-controls {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .badge-mode {
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 700;
-        }
-        .badge-student { background: #e0f2fe; color: #0369a1; }
-        .badge-teacher { background: #fef3c7; color: #b45309; }
-
-        .btn-toggle-admin, .btn-manage-codes, .btn-google-auth {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.9rem;
-        }
-        .btn-manage-codes { background: #8b5cf6; }
-        .btn-manage-codes:hover { background: #7c3aed; }
-        .btn-toggle-admin:hover { background: var(--accent-hover); }
-        .btn-google-auth { background: #ef4444; }
-        .btn-google-auth:hover { background: #dc2626; }
-
-        /* General Buttons */
-        .btn-primary {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
-        .btn-primary:hover { background: var(--accent-hover); }
-
-        .btn-gold {
-            background: var(--gold);
-            color: white;
-            border: none;
-            padding: 10px 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.3s;
-        }
-        .btn-gold:hover { background: var(--gold-hover); }
-
-        .btn-danger {
-            background: #fee2e2;
-            color: var(--danger);
-            border: 1px solid #fca5a5;
-            padding: 8px 14px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: 0.3s;
-        }
-        .btn-danger:hover { background: #fca5a5; }
-
-        /* Main Container */
-        .container {
-            max-width: 1250px;
-            margin: 0 auto;
-            padding: 1.5rem 1rem;
-            flex: 1;
-            width: 100%;
-        }
-
-        /* Hero Header */
-        .hero {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
-            color: var(--text-light);
-            padding: 2.5rem 1.5rem;
-            text-align: center;
-            border-radius: 20px;
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.15);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        .hero h1 { font-size: 1.8rem; margin-bottom: 8px; font-weight: 800; }
-        .hero p { font-size: 0.95rem; opacity: 0.9; }
-
-        /* Teacher Profile Image Style */
-        .teacher-avatar {
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 4px solid var(--gold);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-            margin-bottom: 1.2rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .teacher-avatar:hover {
-            transform: scale(1.05);
-            box-shadow: 0 12px 30px rgba(245, 158, 11, 0.4);
-        }
-
-        /* Features Section & Cards - تصميم زجاجي ومودرن */
-        .features-section {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.7);
-            border-radius: 24px;
-            padding: 2.5rem 1.8rem;
-            margin-bottom: 2.5rem;
-            box-shadow: 0 20px 40px -15px rgba(15, 23, 42, 0.05);
-            position: relative;
-        }
-
-        .features-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .features-header h2 {
-            font-size: 1.6rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.4rem;
-        }
-
-        .features-header p {
-            font-size: 0.95rem;
-            color: #64748b;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-            gap: 22px;
-        }
-
-        /* أنيميشن انسيابي لظهور الكروت عند السكرول بالـ CSS pure */
-        .feature-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            border-radius: 20px;
-            padding: 1.6rem;
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            position: relative;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.04);
-            
-            /* تأثير الظهور الانسيابي عند التمرير */
-            animation: scrollReveal linear both;
-            animation-timeline: view();
-            animation-range: entry 10% cover 30%;
-        }
-
-        @keyframes scrollReveal {
-            from {
-                opacity: 0;
-                transform: translateY(35px) scale(0.96);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .feature-card:hover {
-            transform: translateY(-8px) scale(1.02);
-            box-shadow: 0 18px 35px -10px rgba(37, 99, 235, 0.15);
-            border-color: var(--accent);
-        }
-
-        .feature-icon-wrapper {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            transition: all 0.4s ease;
-        }
-
-        .feature-card:hover .feature-icon-wrapper {
-            background: var(--accent);
-            color: white;
-            transform: scale(1.1) rotate(-6deg);
-        }
-
-        .feature-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .feature-desc {
-            font-size: 0.88rem;
-            color: #64748b;
-            line-height: 1.6;
-        }
-
-        /* Filter Tabs */
-        .filter-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            background: #ffffff;
-            border: 1px solid var(--border);
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            color: var(--text-dark);
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        /* Course Catalog Section */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1.5rem;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .section-title {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--primary);
-            border-right: 4px solid var(--accent);
-            padding-right: 12px;
-        }
-
-        .courses-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 3rem;
-        }
-
-        .course-card {
-            background: var(--card-bg);
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-            transition: transform 0.3s, box-shadow 0.3s;
-            display: flex;
-            flex-direction: column;
-            border: 1px solid var(--border);
-            position: relative;
-        }
-        .course-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
-        }
-        .card-cover {
-            height: 160px;
-            background: linear-gradient(135deg, #1e293b, #0f172a);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            position: relative;
-            padding: 1rem;
-            text-align: center;
-        }
-        .card-cover i { font-size: 2.8rem; color: var(--gold); margin-bottom: 6px; }
-
-        .stage-badge {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: rgba(15, 23, 42, 0.85);
-            color: #fff;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-
-        .lock-badge {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 0.75rem;
-            font-weight: 700;
-        }
-        .badge-locked { background: #ef4444; color: white; }
-        .badge-unlocked { background: #10b981; color: white; }
-        .badge-free { background: #3b82f6; color: white; }
-
-        .course-body {
-            padding: 1.2rem;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-        .course-title { font-size: 1.15rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
-        .course-desc { font-size: 0.88rem; color: #64748b; margin-bottom: 15px; line-height: 1.5; flex: 1; }
-        .lecture-count { font-size: 0.85rem; color: var(--accent); font-weight: 700; margin-bottom: 12px; }
-
-        .course-detail-view { display: none; }
+<style>
+    /* ==========================================================================
+       1. VARIABLES & PALETTE (Tech, Modern & Calming Dark Theme)
+       ========================================================================== */
+    :root {
+        --bg-dark: #070a12;
+        --surface-1: #0f172a;
+        --surface-2: rgba(30, 41, 59, 0.7);
+        --surface-border: rgba(255, 255, 255, 0.08);
+        --surface-border-hover: rgba(6, 182, 212, 0.4);
         
-        .breadcrumb-bar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-        .btn-back {
-            background: #e2e8f0;
-            color: var(--text-dark);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 700;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-back:hover { background: #cbd5e1; }
+        /* Tech Accent Colors */
+        --accent-cyan: #06b6d4;
+        --accent-cyan-glow: rgba(6, 182, 212, 0.25);
+        --accent-blue: #3b82f6;
+        
+        /* Typography Colors */
+        --text-main: #f1f5f9;
+        --text-muted: #94a3b8;
+        --text-dim: #64748b;
 
-        .course-detail-layout {
-            display: grid;
-            grid-template-columns: 1fr 340px;
-            gap: 20px;
-        }
-        @media (max-width: 900px) {
-            .course-detail-layout { grid-template-columns: 1fr; }
-        }
+        /* Status Colors */
+        --danger: #f43f5e;
+        --danger-bg: rgba(244, 63, 94, 0.12);
+        --success: #10b981;
+        --success-bg: rgba(16, 185, 129, 0.12);
+        
+        --radius-lg: 20px;
+        --radius-md: 12px;
+        --radius-sm: 8px;
+        --transition-fast: 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
 
-        .video-main-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 1.2rem;
-            border: 1px solid var(--border);
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+        font-family: 'Cairo', system-ui, -apple-system, sans-serif;
+    }
 
-        .video-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-            background: #000;
-            border-radius: 12px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-        .video-container iframe {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%; border: none;
-        }
-        .watermark {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.75);
-            color: rgba(255, 255, 255, 0.9);
-            padding: 4px 12px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            pointer-events: none;
-            z-index: 10;
-        }
+    /* ==========================================================================
+       2. BASE & AMBIENT BACKGROUND
+       ========================================================================== */
+    body {
+        background-color: var(--bg-dark);
+        /* إضاءة خلفية هادئة تحاكي أجهزة التكنولوجيا الحديثة */
+        background-image: 
+            radial-gradient(circle at 15% 15%, rgba(6, 182, 212, 0.05) 0%, transparent 45%),
+            radial-gradient(circle at 85% 85%, rgba(59, 130, 246, 0.05) 0%, transparent 45%);
+        background-attachment: fixed;
+        color: var(--text-main);
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
 
-        .lectures-playlist-panel {
-            background: white;
-            border-radius: 16px;
-            padding: 1.2rem;
-            border: 1px solid var(--border);
-            max-height: 650px;
-            display: flex;
-            flex-direction: column;
-        }
-        .playlist-header {
-            font-weight: 700;
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--bg);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .playlist-items {
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            flex: 1;
-        }
-        .playlist-item {
-            padding: 12px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            background: #f8fafc;
-        }
-        .playlist-item:hover { background: #eff6ff; border-color: var(--accent); }
-        .playlist-item.active { background: #dbeafe; border-color: var(--accent); }
-        .playlist-item .lecture-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            border: 1px solid var(--border);
-        }
-        .playlist-item.active .lecture-icon { background: var(--accent); color: white; }
-        .playlist-item-info { flex: 1; overflow: hidden; }
-        .playlist-item-title { font-weight: 700; font-size: 0.92rem; text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
-        .playlist-item-sub { font-size: 0.78rem; color: #64748b; }
+    /* ==========================================================================
+       3. AUTH OVERLAY (Glassmorphic Tech Lock)
+       ========================================================================== */
+    #authOverlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 10, 18, 0.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        z-index: 99999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1.5rem;
+        text-align: center;
+    }
 
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #64748b;
-            grid-column: 1 / -1;
-            background: white;
-            border-radius: 16px;
-            border: 2px dashed #cbd5e1;
-        }
-        .empty-state i { font-size: 3rem; color: #94a3b8; margin-bottom: 1rem; }
+    .auth-card {
+        background: var(--surface-2);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        padding: 3rem 2rem;
+        max-width: 440px;
+        width: 100%;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.75);
-            backdrop-filter: blur(4px);
-            z-index: 2000;
-            justify-content: center;
-            align-items: center;
-            padding: 1rem;
-        }
-        .modal-content {
-            background: white;
-            border-radius: 16px;
-            width: 100%;
-            max-width: 650px;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 1.8rem;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            position: relative;
-        }
-        .close-modal {
-            position: absolute;
-            top: 15px; left: 15px;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: #94a3b8;
-            transition: 0.2s;
-        }
-        .close-modal:hover { color: var(--danger); }
-        .modal-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--primary); }
+    .auth-card i.brand-icon {
+        font-size: 3rem;
+        color: var(--accent-cyan);
+        margin-bottom: 1.2rem;
+        filter: drop-shadow(0 0 12px var(--accent-cyan-glow));
+    }
 
-        .form-group { margin-bottom: 1rem; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
-        .form-group input, .form-group textarea, .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            outline: none;
-        }
-        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--accent); }
+    .auth-card h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.5rem;
+    }
 
-        .quiz-question-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            padding: 1rem;
-            border-radius: 10px;
-            margin-bottom: 1rem;
-        }
-        .option-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            background: white;
-            padding: 8px 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            margin-bottom: 6px;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-        .option-label:hover { border-color: var(--accent); background: #eff6ff; }
+    .auth-card p {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+        line-height: 1.6;
+    }
 
-        .codes-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
-        .codes-table th, .codes-table td { border: 1px solid #e2e8f0; padding: 8px; text-align: right; }
-        .codes-table th { background: #f1f5f9; }
+    .btn-google-login-large {
+        background: #ffffff;
+        color: var(--bg-dark);
+        border: none;
+        padding: 12px 24px;
+        border-radius: var(--radius-md);
+        font-size: 0.95rem;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        width: 100%;
+        transition: var(--transition-fast);
+    }
 
-        footer {
-            background: var(--primary);
-            color: var(--text-light);
-            padding: 2.5rem 1rem 1.5rem 1rem;
-            margin-top: auto;
-        }
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1.5rem;
-            text-align: center;
-        }
-        .teacher-info h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--gold); }
-        .teacher-links { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; }
-        .btn-contact {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 10px 18px;
-            border-radius: 30px;
-            text-decoration: none;
-            color: white;
-            font-weight: 600;
-            font-size: 0.95rem;
-            transition: 0.3s;
-        }
-        .btn-whatsapp { background: #25d366; }
-        .btn-whatsapp:hover { background: #1da851; }
-        .btn-facebook { background: #1877f2; }
-        .btn-facebook:hover { background: #0d65d9; }
+    .btn-google-login-large:hover {
+        background: #e2e8f0;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(255, 255, 255, 0.15);
+    }
 
-        .developer-credit {
-            font-size: 0.95rem;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+    /* ==========================================================================
+       4. NAVBAR (Floating Modern Glass Header)
+       ========================================================================== */
+    .navbar {
+        background: rgba(15, 23, 42, 0.75);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid var(--surface-border);
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: var(--text-main);
+        cursor: pointer;
+        user-select: none;
+        letter-spacing: -0.3px;
+    }
+
+    .brand i { 
+        color: var(--accent-cyan); 
+        font-size: 1.4rem; 
+        filter: drop-shadow(0 0 8px var(--accent-cyan-glow));
+    }
+
+    .nav-controls {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .badge-mode {
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        border: 1px solid transparent;
+    }
+    .badge-student { 
+        background: rgba(6, 182, 212, 0.1); 
+        color: var(--accent-cyan); 
+        border-color: rgba(6, 182, 212, 0.2); 
+    }
+    .badge-teacher { 
+        background: rgba(59, 130, 246, 0.1); 
+        color: var(--accent-blue); 
+        border-color: rgba(59, 130, 246, 0.2); 
+    }
+
+    .btn-toggle-admin, .btn-manage-codes, .btn-google-auth {
+        background: var(--surface-2);
+        color: var(--text-main);
+        border: 1px solid var(--surface-border);
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 600;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 0.85rem;
+    }
+    .btn-toggle-admin:hover, .btn-manage-codes:hover {
+        background: var(--surface-border-hover);
+        border-color: var(--accent-cyan);
+        color: #fff;
+    }
+    .btn-google-auth { 
+        background: var(--danger-bg); 
+        color: var(--danger); 
+        border-color: rgba(244, 63, 94, 0.2);
+    }
+    .btn-google-auth:hover { 
+        background: var(--danger); 
+        color: #fff; 
+    }
+
+    /* ==========================================================================
+       5. BUTTONS (Minimalist Tech Style)
+       ========================================================================== */
+    .btn-primary, .btn-gold {
+        background: var(--accent-cyan);
+        color: var(--bg-dark);
+        border: none;
+        padding: 9px 18px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 700;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        transition: var(--transition-fast);
+        box-shadow: 0 4px 14px var(--accent-cyan-glow);
+    }
+    .btn-primary:hover, .btn-gold:hover { 
+        filter: brightness(1.15);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(6, 182, 212, 0.4);
+    }
+
+    .btn-danger {
+        background: var(--danger-bg);
+        color: var(--danger);
+        border: 1px solid rgba(244, 63, 94, 0.3);
+        padding: 8px 14px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 600;
+        transition: var(--transition-fast);
+    }
+    .btn-danger:hover { 
+        background: var(--danger); 
+        color: white; 
+    }
+
+    /* ==========================================================================
+       6. MAIN CONTAINER & HERO HEADER
+       ========================================================================== */
+    .container {
+        max-width: 1250px;
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        flex: 1;
+        width: 100%;
+    }
+
+    .hero {
+        background: var(--surface-1);
+        border: 1px solid var(--surface-border);
+        color: var(--text-main);
+        padding: 3rem 1.5rem;
+        text-align: center;
+        border-radius: var(--radius-lg);
+        margin-bottom: 2.5rem;
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    /* لمسة ضوئية خلف الهيرو */
+    .hero::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 300px;
+        height: 300px;
+        background: var(--accent-cyan);
+        opacity: 0.15;
+        filter: blur(90px);
+        pointer-events: none;
+    }
+
+    .hero h1 { 
+        font-size: 2rem; 
+        margin-bottom: 8px; 
+        font-weight: 800; 
+        letter-spacing: -0.5px; 
+    }
+    .hero p { 
+        font-size: 0.95rem; 
+        color: var(--text-muted); 
+        max-width: 600px;
+    }
+
+    /* Teacher Profile Image */
+    .teacher-avatar {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent-cyan);
+        box-shadow: 0 0 25px var(--accent-cyan-glow);
+        margin-bottom: 1.2rem;
+        transition: var(--transition-fast);
+    }
+    .teacher-avatar:hover {
+        transform: scale(1.03);
+        box-shadow: 0 0 35px rgba(6, 182, 212, 0.4);
+    }
+
+    /* ==========================================================================
+       7. FEATURES SECTION & CARDS (Cyber Glassmorphism)
+       ========================================================================== */
+    .features-section {
+        background: rgba(15, 23, 42, 0.4);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        padding: 2.5rem 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .features-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .features-header h2 {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--text-main);
+        margin-bottom: 0.4rem;
+    }
+
+    .features-header p {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 20px;
+    }
+
+    .feature-card {
+        background: var(--surface-1);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-md);
+        padding: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+        transition: var(--transition-fast);
+        position: relative;
+        
+        /* تأثير الظهور الانسيابي */
+        animation: scrollReveal linear both;
+        animation-timeline: view();
+        animation-range: entry 10% cover 30%;
+    }
+
+    @keyframes scrollReveal {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
         }
-        .developer-credit a { color: #25d366; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; font-weight: 700; }
-        .developer-credit a:hover { text-decoration: underline; }
-    </style>
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .feature-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--accent-cyan);
+        box-shadow: 0 10px 30px -10px rgba(6, 182, 212, 0.2);
+    }
+
+    .feature-icon-wrapper {
+        width: 48px;
+        height: 48px;
+        border-radius: 10px;
+        background: rgba(6, 182, 212, 0.08);
+        color: var(--accent-cyan);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        transition: var(--transition-fast);
+    }
+
+    .feature-card:hover .feature-icon-wrapper {
+        background: var(--accent-cyan);
+        color: var(--bg-dark);
+        border-color: var(--accent-cyan);
+    }
+
+    .feature-title {
+        font-size: 1.05rem;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+
+    .feature-desc {
+        font-size: 0.85rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+    }
+
+    /* ==========================================================================
+       8. FILTER TABS & CATALOG
+       ========================================================================== */
+    .filter-container {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+    .filter-btn {
+        background: var(--surface-1);
+        border: 1px solid var(--surface-border);
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.88rem;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        color: var(--text-muted);
+    }
+    .filter-btn.active, .filter-btn:hover {
+        background: var(--accent-cyan);
+        color: var(--bg-dark);
+        border-color: var(--accent-cyan);
+        font-weight: 700;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+    .section-title {
+        font-size: 1.3rem;
+        font-weight: 800;
+        color: var(--text-main);
+        border-right: 3px solid var(--accent-cyan);
+        padding-right: 12px;
+    }
+
+    .courses-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+        gap: 22px;
+        margin-bottom: 3rem;
+    }
+
+    .course-card {
+        background: var(--surface-1);
+        border-radius: var(--radius-md);
+        overflow: hidden;
+        transition: var(--transition-fast);
+        display: flex;
+        flex-direction: column;
+        border: 1px solid var(--surface-border);
+        position: relative;
+    }
+    .course-card:hover {
+        transform: translateY(-4px);
+        border-color: var(--surface-border-hover);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+    }
+    .card-cover {
+        height: 150px;
+        background: linear-gradient(135deg, #1e293b, #0f172a);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: relative;
+        padding: 1rem;
+    }
+    .card-cover i { 
+        font-size: 2.5rem; 
+        color: var(--accent-cyan); 
+        margin-bottom: 6px; 
+    }
+
+    .stage-badge {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(7, 10, 18, 0.75);
+        border: 1px solid var(--surface-border);
+        color: var(--text-muted);
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+
+    .lock-badge {
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        padding: 3px 10px;
+        border-radius: 12px;
+        font-size: 0.72rem;
+        font-weight: 700;
+    }
+    .badge-locked { background: var(--danger-bg); color: var(--danger); border: 1px solid rgba(244, 63, 94, 0.3); }
+    .badge-unlocked { background: var(--success-bg); color: var(--success); border: 1px solid rgba(16, 185, 129, 0.3); }
+    .badge-free { background: rgba(59, 130, 246, 0.15); color: var(--accent-blue); border: 1px solid rgba(59, 130, 246, 0.3); }
+
+    .course-body {
+        padding: 1.2rem;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
+    .course-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+    .course-desc { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 15px; line-height: 1.5; flex: 1; }
+    .lecture-count { font-size: 0.8rem; color: var(--accent-cyan); font-weight: 700; margin-bottom: 12px; }
+
+    /* ==========================================================================
+       9. COURSE DETAIL VIEW & PLAYER
+       ========================================================================== */
+    .course-detail-view { display: none; }
+    
+    .breadcrumb-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.5rem;
+        background: var(--surface-1);
+        padding: 0.8rem 1.2rem;
+        border-radius: var(--radius-md);
+        border: 1px solid var(--surface-border);
+        gap: 10px;
+    }
+    .btn-back {
+        background: var(--surface-2);
+        color: var(--text-main);
+        border: 1px solid var(--surface-border);
+        padding: 6px 14px;
+        border-radius: var(--radius-sm);
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        transition: var(--transition-fast);
+    }
+    .btn-back:hover { background: var(--surface-border-hover); border-color: var(--accent-cyan); }
+
+    .course-detail-layout {
+        display: grid;
+        grid-template-columns: 1fr 320px;
+        gap: 20px;
+    }
+    @media (max-width: 900px) {
+        .course-detail-layout { grid-template-columns: 1fr; }
+    }
+
+    .video-main-panel {
+        background: var(--surface-1);
+        border-radius: var(--radius-md);
+        padding: 1.2rem;
+        border: 1px solid var(--surface-border);
+    }
+
+    .video-container {
+        position: relative;
+        width: 100%;
+        padding-top: 56.25%;
+        background: #000;
+        border-radius: var(--radius-sm);
+        overflow: hidden;
+        margin-bottom: 1rem;
+        border: 1px solid var(--surface-border);
+    }
+    .video-container iframe {
+        position: absolute;
+        inset: 0; width: 100%; height: 100%; border: none;
+    }
+    .watermark {
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(7, 10, 18, 0.8);
+        border: 1px solid var(--surface-border);
+        color: var(--text-muted);
+        padding: 4px 12px;
+        border-radius: 6px;
+        font-size: 0.72rem;
+        pointer-events: none;
+        z-index: 10;
+    }
+
+    .lectures-playlist-panel {
+        background: var(--surface-1);
+        border-radius: var(--radius-md);
+        padding: 1.2rem;
+        border: 1px solid var(--surface-border);
+        max-height: 600px;
+        display: flex;
+        flex-direction: column;
+    }
+    .playlist-header {
+        font-weight: 700;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--surface-border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: var(--text-main);
+    }
+    .playlist-items {
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        flex: 1;
+    }
+    .playlist-item {
+        padding: 10px 12px;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--surface-border);
+        cursor: pointer;
+        transition: var(--transition-fast);
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: rgba(255, 255, 255, 0.02);
+    }
+    .playlist-item:hover { 
+        background: rgba(6, 182, 212, 0.05); 
+        border-color: var(--accent-cyan); 
+    }
+    .playlist-item.active { 
+        background: rgba(6, 182, 212, 0.12); 
+        border-color: var(--accent-cyan); 
+    }
+    .playlist-item .lecture-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background: var(--surface-2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: var(--accent-cyan);
+        font-weight: 700;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        border: 1px solid var(--surface-border);
+    }
+    .playlist-item.active .lecture-icon { 
+        background: var(--accent-cyan); 
+        color: var(--bg-dark); 
+    }
+    .playlist-item-info { flex: 1; overflow: hidden; }
+    .playlist-item-title { font-weight: 600; font-size: 0.88rem; color: var(--text-main); text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+    .playlist-item-sub { font-size: 0.75rem; color: var(--text-dim); }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+        grid-column: 1 / -1;
+        background: var(--surface-1);
+        border-radius: var(--radius-md);
+        border: 1px dashed var(--surface-border);
+    }
+    .empty-state i { font-size: 2.5rem; color: var(--text-dim); margin-bottom: 1rem; }
+
+    /* ==========================================================================
+       10. MODALS & FORMS
+       ========================================================================== */
+    .modal {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(7, 10, 18, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        z-index: 2000;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+    }
+    .modal-content {
+        background: var(--surface-1);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-lg);
+        width: 100%;
+        max-width: 600px;
+        max-height: 85vh;
+        overflow-y: auto;
+        padding: 2rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        position: relative;
+        color: var(--text-main);
+    }
+    .close-modal {
+        position: absolute;
+        top: 18px; left: 18px;
+        font-size: 1.3rem;
+        cursor: pointer;
+        color: var(--text-muted);
+        transition: var(--transition-fast);
+    }
+    .close-modal:hover { color: var(--danger); }
+    .modal-title { font-size: 1.25rem; font-weight: 700; margin-bottom: 1.2rem; color: var(--text-main); }
+
+    .form-group { margin-bottom: 1.2rem; }
+    .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.85rem; color: var(--text-muted); }
+    .form-group input, .form-group textarea, .form-group select {
+        width: 100%;
+        padding: 10px 14px;
+        background: var(--bg-dark);
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-sm);
+        font-size: 0.9rem;
+        color: var(--text-main);
+        outline: none;
+        transition: var(--transition-fast);
+    }
+    .form-group input:focus, .form-group textarea:focus, .form-group select:focus { 
+        border-color: var(--accent-cyan); 
+        box-shadow: 0 0 10px var(--accent-cyan-glow);
+    }
+
+    .quiz-question-box {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid var(--surface-border);
+        padding: 1rem;
+        border-radius: var(--radius-sm);
+        margin-bottom: 1rem;
+    }
+    .option-label {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        background: var(--bg-dark);
+        padding: 10px 12px;
+        border: 1px solid var(--surface-border);
+        border-radius: var(--radius-sm);
+        margin-bottom: 6px;
+        cursor: pointer;
+        transition: var(--transition-fast);
+        font-size: 0.88rem;
+    }
+    .option-label:hover { border-color: var(--accent-cyan); background: rgba(6, 182, 212, 0.05); }
+
+    .codes-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
+    .codes-table th, .codes-table td { border: 1px solid var(--surface-border); padding: 10px; text-align: right; }
+    .codes-table th { background: var(--surface-2); color: var(--text-main); }
+
+    /* ==========================================================================
+       11. FOOTER
+       ========================================================================== */
+    footer {
+        background: var(--surface-1);
+        border-top: 1px solid var(--surface-border);
+        color: var(--text-muted);
+        padding: 2.5rem 1rem 1.5rem 1rem;
+        margin-top: auto;
+    }
+    .footer-content {
+        max-width: 1200px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1.5rem;
+        text-align: center;
+    }
+    .teacher-info h3 { font-size: 1.3rem; font-weight: 800; margin-bottom: 6px; color: var(--text-main); }
+    .teacher-links { display: flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+    .btn-contact {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 18px;
+        border-radius: 20px;
+        text-decoration: none;
+        color: white;
+        font-weight: 600;
+        font-size: 0.88rem;
+        transition: var(--transition-fast);
+    }
+    .btn-whatsapp { background: rgba(37, 211, 102, 0.15); color: #25d366; border: 1px solid rgba(37, 211, 102, 0.3); }
+    .btn-whatsapp:hover { background: #25d366; color: black; }
+    .btn-facebook { background: rgba(24, 119, 242, 0.15); color: #1877f2; border: 1px solid rgba(24, 119, 242, 0.3); }
+    .btn-facebook:hover { background: #1877f2; color: white; }
+
+    .developer-credit {
+        font-size: 0.85rem;
+        color: var(--text-dim);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .developer-credit a { color: var(--accent-cyan); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; font-weight: 700; }
+    .developer-credit a:hover { text-decoration: underline; }
+</style>
 </head>
-<>
+</h>
 
     <!-- Access Lock Overlay (Google Auth Required) -->
     <div id="authOverlay">
         <div class="auth-card">
             <i class="fa-solid fa-graduation-cap brand-icon"></i>
-            <h2>منصة الأستاذ إبراهيم مصلحي</h2>
+            <h2>منصة الأستاذ سعيد ابراهيم</h2>
             <p>مرحباً بك! يرجى تسجيل الدخول بحساب Google للوصول الكامل إلى المحاضرات والامتحانات التفاعلية على المنصة.</p>
             <button class="btn-google-login-large" onclick="handleGoogleAuth()">
                 <i class="fa-brands fa-google" style="color: #ea4335;"></i>
@@ -760,7 +860,7 @@
     <nav class="navbar">
         <div class="brand" onclick="showCatalogView()">
             <i class="fa-solid fa-graduation-cap"></i>
-            <span>منصة الأستاذ إبراهيم مصلحي</span>
+            <span>منصة الأستاذ سعيد ابراهيم computer science</span>
         </div>
         <div class="nav-controls">
             <span id="roleBadge" class="badge-mode badge-student">وضع الطالب</span>
@@ -783,15 +883,14 @@
         <!-- VIEW 1: CATALOG VIEW -->
         <div id="catalogView">
             <header class="hero">
-                <img src="12.jpg" alt="الأستاذ إبراهيم مصلحي" class="teacher-avatar">
-                <h1>مرحباً بكم في منصة الأستاذ إبراهيم مصلحي LEARN ENGLISH</h1>
+                <h1>مرحباً بكم في منصة الأستاذ سعيد </h1>
                 <p>اختر الكورس الخاص بمرحلتك الدراسية للوصول للمحاضرات والامتحانات التفاعلية</p>
             </header>
 
             <!-- قسم مميزات المنصة والمستر (7 كروت) -->
             <section class="features-section">
                 <div class="features-header">
-                    <h2><i class="fa-solid fa-star" style="color: var(--gold);"></i> مميزات التعلم مع الأستاذ إبراهيم مصلحي</h2>
+                    <h2><i class="fa-solid fa-star" style="color: var(--gold);"></i> مميزات التعلم مع الأستاذ سعيد</h2>
                     <p>تجربة تعليمية متكاملة ومخصصة لطلاب المرحلة الإعدادية والثانوية</p>
                 </div>
                 <div class="features-grid">
@@ -800,7 +899,7 @@
                             <i class="fa-solid fa-spell-check"></i>
                         </div>
                         <h3 class="feature-title">تبسيط القواعد التأسيسية</h3>
-                        <p class="feature-desc">شرح مبسط وشامل لقواعد اللغة الإنجليزية من الأساسيات وحتى أسرار التفوق للمرحلة الثانوية.</p>
+                        <p class="feature-desc">شرح مبسط وشامل لمادة الكمبيوتر من الأساسيات وحتى أسرار التفوق للمرحلة الثانوية.</p>
                     </div>
 
                     <div class="feature-card">
@@ -831,8 +930,8 @@
                         <div class="feature-icon-wrapper">
                             <i class="fa-solid fa-language"></i>
                         </div>
-                        <h3 class="feature-title">تطوير مهارات الترجمة والقطع</h3>
-                        <p class="feature-desc">تدريب خاص على التعامل مع قطع الفهم الصعبة وترجمة النصوص باحترافية وكتابة المقالات.</p>
+                        <h3 class="feature-title">تطوير المهارات  </h3>
+                        <p class="feature-desc">تدريب خاص على التعامل اي صعوبات تواجهها باحترافية .</p>
                     </div>
 
                     <div class="feature-card">
@@ -840,7 +939,7 @@
                             <i class="fa-solid fa-headset"></i>
                         </div>
                         <h3 class="feature-title">متابعة مستمرة عبر الواتساب</h3>
-                        <p class="feature-desc">تواصل مباشر ومستمر مع الأستاذ إبراهيم للإجابة على جميع الاستفسارات والأسئلة في أي وقت.</p>
+                        <p class="feature-desc">تواصل مباشر ومستمر مع الأستاذ سعيد للإجابة على جميع الاستفسارات والأسئلة في أي وقت.</p>
                     </div>
 
                     <div class="feature-card">
@@ -891,7 +990,7 @@
             <div class="course-detail-layout">
                 <div class="video-main-panel">
                     <div class="video-container">
-                        <div class="watermark">الأستاذ إبراهيم مصلحي - جميع الحقوق محفوظة</div>
+                        <div class="watermark">الأستاذ سعيد إبراهيم  - جميع الحقوق محفوظة</div>
                         <iframe id="mainVideoIframe" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                     </div>
 
@@ -920,13 +1019,13 @@
     <footer>
         <div class="footer-content">
             <div class="teacher-info">
-                <h3>الأستاذ إبراهيم مصلحي</h3>
+                <h3>الأستاذ سعيد\</h3>
                 <p style="margin-bottom: 12px; color: #cbd5e1;">معلم اللغة الإنجليزية للمرحلتين الإعدادية والثانوية</p>
                 <div class="teacher-links">
                     <a href="https://wa.me/201010908156" target="_blank" class="btn-contact btn-whatsapp">
-                        <i class="fa-brands fa-whatsapp"></i> واتساب المستر: 01010908156
+                        <i class="fa-brands fa-whatsapp"></i> واتساب المستر: 01061048283
                     </a>
-                    <a href="https://www.facebook.com/share/19d58yoniV/" target="_blank" class="btn-contact btn-facebook">
+                    <a href="https://www.facebook.com/share/1Lf9KRnSzV/" target="_blank" class="btn-contact btn-facebook">
                         <i class="fa-brands fa-facebook"></i> صفحة الفيس بوك
                     </a>
                 </div>
@@ -1092,7 +1191,7 @@
             <p id="resultFeedback" style="color: #64748b; font-weight: 600; margin-bottom: 1.5rem;"></p>
 
             <button class="btn-primary" style="background: #25d366; width: 100%; justify-content: center; margin-bottom: 8px;" onclick="sendResultToWhatsApp()">
-                <i class="fa-brands fa-whatsapp"></i> إرسال النتيجة للأستاذ إبراهيم عبر الواتساب
+                <i class="fa-brands fa-whatsapp">رسال النتيجة للأستاذ عبر الواتساب</i> 
             </button>
             <button class="btn-primary" style="background: #64748b; width: 100%; justify-content: center;" onclick="closeModal('quizResultModal')">إغلاق</button>
         </div>
@@ -1124,7 +1223,7 @@
 
         let currentUser = null;
         let isAdmin = false;
-        const ADMIN_PIN = "1234567890";
+        const ADMIN_PIN = "4211791";
         let currentFilter = 'all';
         let activeCourseId = null;
         let activeLectureId = null;
